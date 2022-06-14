@@ -6,7 +6,7 @@
 
 iOS, Android, Windows, Mac
 
-# Xamarin Form Gesture Effects
+# Maui Gesture Effects
 
 Add "advanced" gestures to Maui. Available on all views.
 Most gesture commands include the event position.
@@ -42,7 +42,7 @@ Add Gesture.TapCommand on any supported xaml view:
 ```
 Declare the corresponding namespace:
 ```xaml
-    <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+    <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              ...
              xmlns:ui="clr-namespace:MauiGestures;assembly=MauiGestures"
