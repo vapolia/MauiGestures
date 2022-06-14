@@ -16,8 +16,12 @@
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
 <!--        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>-->
         <Nullable>enable</Nullable>
+
     </PropertyGroup>
 	
+    <ItemGroup>
+        <None Include="..\\LICENSE" Pack="true" PackagePath="" />
+    </ItemGroup>
     
     <!--  nuget configurable properties -->
     <PropertyGroup>
