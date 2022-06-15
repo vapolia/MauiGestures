@@ -131,11 +131,12 @@ public static class Gesture
     {
     }
 
-    public static void AddAdvancedGestures(this MauiAppBuilder builder)
+    public static MauiAppBuilder AddAdvancedGestures(this MauiAppBuilder builder)
     {
         builder.ConfigureEffects(effects =>
         {
             effects.Add<GestureEffect, PlatformGestureEffect>();
         });
+        return builder;
     }
 }
