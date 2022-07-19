@@ -77,7 +77,7 @@ And in the viewmodel:
  
 # Examples
 
-## Somme commands in XAML
+## Some commands in XAML
 
 ```xml
 <StackLayout ui:Gesture.TapCommand="{Binding OpenCommand}" IsEnabled="True">
