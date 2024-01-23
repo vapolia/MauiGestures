@@ -42,6 +42,10 @@ jobs:
           
           New-Item -ItemType Directory -Force -Path .\artifacts
           dotnet pack --output ./artifacts -c Release -p:PackageVersion=$VERSION MauiGestures\MauiGestures.csproj
+
+# github package uses storage space, which is a limited resource          
+          dotnet nuget push ./artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NuGetAPIKey }}
+          
 #          echo "pkgverci=$VERSION" >> $GITHUB_OUTPUT
 #$pfxPath = Join-Path -Path $pwd -ChildPath "codesigncert.pfx"
 #[IO.File]::WriteAllBytes("$pfxPath", [System.Convert]::FromBase64String($env:CODESIGN_PFX))
@@ -68,5 +72,6 @@ jobs:
 #        uses: actions/setup-dotnet@v2
 #        with:
 #          dotnet-version: 6.0.x
-      - name: Push to nuget
-        run: dotnet nuget push ./artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NuGetAPIKey }}
+#      - name: Push to nuget
+##       does not find the nupkg file when used without download artifact.
+#        run: dotnet nuget push ./artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NuGetAPIKey }}
