@@ -24,7 +24,7 @@ jobs:
           dotnet-version: 8.0.x
           source-url: https://api.nuget.org/v3/index.json
         env:
-          NUGET_AUTH_TOKEN: ${{secrets.NuGetAPIKey}}
+          NUGET_AUTH_TOKEN: ${{secrets.NUGETAPIKEY}}
 
 #      - name: Install MAUI workload
 #        run: dotnet workload install maui
