@@ -69,4 +69,4 @@ jobs:
 #        with:
 #          dotnet-version: 6.0.x
       - name: Push to nuget
-        run: dotnet nuget push *.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NuGetAPIKey }}
+        run: dotnet nuget push ./artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NuGetAPIKey }}
