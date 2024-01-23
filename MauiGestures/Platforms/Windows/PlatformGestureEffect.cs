@@ -11,7 +11,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
 {
     readonly GestureRecognizer detector;
     int swipeThresholdInPoints = 40;
-    private object commandParameter;
+    private object? commandParameter;
     
     /// <summary>
     /// Take a Point parameter
@@ -103,7 +103,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
         //};
     }
 
-    private void TriggerCommand(ICommand command, object parameter)
+    private void TriggerCommand(ICommand? command, object? parameter)
     {
         if(command?.CanExecute(parameter) == true)
             command.Execute(parameter);
