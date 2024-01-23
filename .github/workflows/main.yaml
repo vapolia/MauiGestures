@@ -19,16 +19,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.0.x
-      - name: Setup NuGet
-        uses: nuget/setup-nuget@v1
-        with:
-          nuget-api-key: ${{ secrets.NuGetAPIKey }}
-          nuget-version: latest
-      - name: Install MAUI workload
-        run: dotnet workload install maui
+          source-url: https://api.nuget.org/v3/index.json
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.NuGetAPIKey}}
+
+#      - name: Install MAUI workload
+#        run: dotnet workload install maui
+
       - name: Build
         run: dotnet build -c Release MauiGestures\MauiGestures.csproj
       - name: Package NuGets
@@ -39,10 +39,14 @@ jobs:
             $VERSION = $env:GITHUB_REF.Substring($env:GITHUB_REF.LastIndexOf('/') + 1)
           }
           echo "PACKAGE VERSION: $VERSION"
-          
           New-Item -ItemType Directory -Force -Path .\artifacts
           dotnet pack --output ./artifacts -c Release -p:PackageVersion=$VERSION MauiGestures\MauiGestures.csproj
-          dotnet nuget push ./artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NuGetAPIKey }}
+          
+      - name: Publish NuGets
+        shell: pwsh
+        run: |
+          ls .\artifacts
+          dotnet nuget push .\artifacts\*.nupkg
 
 # github package uses storage space, which is a limited resource          
 
@@ -69,9 +73,9 @@ jobs:
 #        with:
 #          name: nupkg
 #      - name: Setup .NET Core
-#        uses: actions/setup-dotnet@v2
+#        uses: actions/setup-dotnet@v3
 #        with:
-#          dotnet-version: 6.0.x
+#          dotnet-version: 8.0.x
 #      - name: Push to nuget
 ##       does not find the nupkg file when used without download artifact.
 #        run: dotnet nuget push ./artifacts/*.nupkg --source https://api.nuget.org/v3/index.json --api-key ${{ secrets.NuGetAPIKey }}
