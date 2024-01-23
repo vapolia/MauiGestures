@@ -30,6 +30,7 @@ jobs:
 #        run: dotnet workload install maui
 
       - name: Build
+        shell: pwsh
         run: dotnet build -c Release MauiGestures\MauiGestures.csproj
       - name: Package NuGets
         shell: pwsh
@@ -44,9 +45,11 @@ jobs:
           
       - name: Publish NuGets
         shell: pwsh
+        env:
+          NUGET_AUTH_TOKEN: ${{ secrets.NuGetAPIKey }}
         run: |
           ls .\artifacts
-          dotnet nuget push .\artifacts\*.nupkg
+          dotnet nuget push .\artifacts\*.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
 
 # github package uses storage space, which is a limited resource          
 
