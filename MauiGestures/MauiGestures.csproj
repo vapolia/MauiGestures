@@ -21,6 +21,8 @@
 	
     <ItemGroup>
         <None Include="..\\LICENSE" Pack="true" PackagePath="" />
+        <None Include="..\\README.md" Pack="true" PackagePath="" />
+        <None Include="..\\icon.png" Pack="true" PackagePath="" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
     </ItemGroup>
     
@@ -34,7 +36,6 @@
     <!--  nuget properties -->
     <PropertyGroup>
         <PackageId>Vapolia.MauiGesture</PackageId>
-        <PackageIconUrl>https://github.com/softlion/MauiGesture/favicon.ico</PackageIconUrl>
         <Summary>Bring all gestures to Maui (iOS, Android, Windows)</Summary>
         <PackageTags>maui, gesture, tap, swipe, pan, doubletap, ios, android, windows, mac</PackageTags>
         <Title>Gestures support for Maui (ios, android, windows, mac)</Title>
@@ -48,6 +49,8 @@
         <RepositoryUrl>https://github.com/softlion/XamarinFormsGesture</RepositoryUrl>
         <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageIcon>icon.png</PackageIcon>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageProjectUrl>https://vapolia.eu</PackageProjectUrl>
         <PackageReleaseNotes>
