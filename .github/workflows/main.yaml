@@ -28,7 +28,7 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.0.x
-          source-url: https://api.nuget.org/v3/index.json
+          source-url: https://www.nuget.org/api/v2/package
         env:
           NUGET_AUTH_TOKEN: ${{secrets.NUGETAPIKEY}}
 
@@ -50,9 +50,9 @@ jobs:
           New-Item -ItemType Directory -Force -Path ./artifacts
           
           dotnet pack --output ./artifacts -c Release -p:PackageVersion=$VERSION $PROJECT
-          ls ./artifacts
+          # needs to CD because nuget push can't find nuget packages with a linux style path
           cd ./artifacts
-          dotnet nuget push *.nupkg --skip-duplicate -s https://api.nuget.org/v3/index.json
+          dotnet nuget push *.nupkg --skip-duplicate
           
 # github package uses storage space, which is a limited resource          
 
