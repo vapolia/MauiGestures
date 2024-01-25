@@ -28,9 +28,6 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: 8.0.x
-          source-url: https://www.nuget.org/api/v2/package
-        env:
-          NUGET_AUTH_TOKEN: ${{secrets.NUGETAPIKEY}}
 
 #      - name: Install MAUI workload
 #        run: dotnet workload install maui
@@ -41,6 +38,8 @@ jobs:
       
       - name: Package & Publish NuGets
         shell: pwsh
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.NUGETAPIKEY}}
         run: |
           $VERSION="$env:NUPKG_MAJOR-ci$env:GITHUB_RUN_ID"
           if ($env:GITHUB_EVENT_NAME -eq "release") {
@@ -52,7 +51,7 @@ jobs:
           dotnet pack --output ./artifacts -c Release -p:PackageVersion=$VERSION $PROJECT
           # needs to CD because nuget push can't find nuget packages with a linux style path
           cd ./artifacts
-          dotnet nuget push *.nupkg --skip-duplicate
+          dotnet nuget push *.nupkg --skip-duplicate -k "$NUGET_AUTH_TOKEN"
           
 # github package uses storage space, which is a limited resource          
 
