@@ -52,7 +52,7 @@ jobs:
           dotnet pack --output ./artifacts -c Release -p:PackageVersion=$VERSION $PROJECT
           ls ./artifacts
           cd ./artifacts
-          dotnet nuget push *.nupkg --skip-duplicate
+          dotnet nuget push *.nupkg --skip-duplicate -s https://api.nuget.org/v3/index.json
           
 # github package uses storage space, which is a limited resource          
 
