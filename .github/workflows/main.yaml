@@ -18,6 +18,7 @@ jobs:
       NUPKG_MAJOR: 1.0.1
       DOTNET_CLI_TELEMETRY_OPTOUT: true
       DOTNET_NOLOGO: true
+      PROJECT: MauiGestures/MauiGestures.csproj
 #      CODESIGN_PFX: ${{ secrets.CODESIGN_PFX }}
     steps:
       - uses: actions/checkout@v4
@@ -30,15 +31,15 @@ jobs:
           source-url: https://api.nuget.org/v3/index.json
         env:
           NUGET_AUTH_TOKEN: ${{secrets.NUGETAPIKEY}}
-          
+
 #      - name: Install MAUI workload
 #        run: dotnet workload install maui
 
       - name: Build
         shell: pwsh
-        run: dotnet build -c Release MauiGestures/MauiGestures.csproj
+        run: dotnet build -c Release $PROJECT
       
-      - name: Package NuGets
+      - name: Package & Publish NuGets
         shell: pwsh
         run: |
           $VERSION="$env:NUPKG_MAJOR-ci$env:GITHUB_RUN_ID"
@@ -47,16 +48,12 @@ jobs:
           }
           echo "PACKAGE VERSION: $VERSION"
           New-Item -ItemType Directory -Force -Path ./artifacts
-          dotnet pack --output ./artifacts -c Release -p:PackageVersion=$VERSION MauiGestures/MauiGestures.csproj
+          
+          dotnet pack --output ./artifacts -c Release -p:PackageVersion=$VERSION $PROJECT
           ls ./artifacts
           
-      - name: Publish NuGets
-        shell: pwsh
-        run: |
-          cd $GITHUB_WORKSPACE
-          ls ./artifacts 
           dotnet nuget push ./artifacts/*.nupkg --skip-duplicate
-
+          
 # github package uses storage space, which is a limited resource          
 
 #          echo "pkgverci=$VERSION" >> $GITHUB_OUTPUT
