@@ -11,7 +11,8 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    #Needs windows to build the windows version
+    runs-on: windows-latest
     environment: Default
     env:
       NUPKG_MAJOR: 1.0.1
