@@ -20,10 +20,11 @@
     </PropertyGroup>
 	
     <ItemGroup>
-        <None Include="..\\LICENSE" Pack="true" PackagePath="" />
-        <None Include="..\\README.md" Pack="true" PackagePath="" />
-        <None Include="..\\icon.png" Pack="true" PackagePath="" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.3" />
+        <None Include="../LICENSE" Pack="true" PackagePath="" />
+        <None Include="../README.md" Pack="true" PackagePath="" />
+        <None Include="../icon.png" Pack="true" PackagePath="" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.6" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.6" />
     </ItemGroup>
     
     <!--  nuget configurable properties -->
@@ -54,6 +55,7 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageProjectUrl>https://vapolia.eu</PackageProjectUrl>
         <PackageReleaseNotes>
+            1.0.2: UseAdvancedGestures instead of AddAdvancedGestures
             1.0.1: net6 to net8
             1.0.0: MAUI initial version
         </PackageReleaseNotes>

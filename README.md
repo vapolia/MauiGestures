@@ -27,7 +27,7 @@ then add this line to your maui app builder:
 ```c#
 using MauiGestures;
 ...
-builder.AddAdvancedGestures();
+builder.UseAdvancedGestures();
 ``` 
 
 The views on which the gesture is applied should have the property `IsEnabled="True"` and `InputTransparent="False"` which activates user interaction on them.
