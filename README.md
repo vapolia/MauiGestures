@@ -45,8 +45,7 @@ Declare the corresponding namespace:
     <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              ...
-             xmlns:ui="clr-namespace:MauiGestures;assembly=MauiGestures"
-    >
+             xmlns:ui="clr-namespace:MauiGestures;assembly=MauiGestures">
 ```
 And in the viewmodel:
    ```csharp     
