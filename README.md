@@ -146,3 +146,6 @@ If your command is not receiving events, make sure that:
 - you set `IsEnabled="True"` and `InputTransparent="False"` on the element
 
 Windows requires the fall creator update.  
+
+
+![Alt](https://repobeats.axiom.co/api/embed/8b815aadebdd267fc06d925b4c7482bed6b7b715.svg "Repobeats analytics image")
