@@ -56,23 +56,45 @@ And in the viewmodel:
 ```
 # Supported Gestures
 
- *  `TapCommand (ICommand)`
- *  `DoubleTapCommand (ICommand)`
- *  `PanCommand (ICommand)`
- *  `LongPressCommand (ICommand)`
+ *  `TapCommand (ICommand or ICommand<CommandParameter>)` if CommandParameter is set (see below)
+ *  `DoubleTapCommand (ICommand) or ICommand<CommandParameter>`
+ *  `PanCommand (ICommand) or ICommand<CommandParameter>`
+ *  `LongPressCommand (ICommand) or ICommand<CommandParameter>`
  *  `TapPointCommand (ICommand or Command<Point>)` where point is the absolute tap position relative to the view
  *  `DoubleTapPoinCommand (ICommand or Command<Point>)` where point is the absolute double tap position relative to the view
  *  `PanPointCommand (ICommand or Command<PanEventArgs>)` where point is the absolute position relative to the view
  *  `LongPressPointCommand (ICommand or Command<Point>) ` where point is the absolute tap position relative to the view
- *  `SwipeLeftCommand`
- *  `SwipeRightCommand`
- *  `SwipeTopCommand`
- *  `SwipeBottomCommand`
+ *  `SwipeLeftCommand (ICommand) or ICommand<CommandParameter>`
+ *  `SwipeRightCommand (ICommand) or ICommand<CommandParameter>`
+ *  `SwipeTopCommand (ICommand) or ICommand<CommandParameter>`
+ *  `SwipeBottomCommand (ICommand) or ICommand<CommandParameter>`
  *  `PinchCommand (Command<PinchEventArgs>)` where `PinchEventArg` contains `StartingPoints`, `CurrentPoints`, `Center`, `Scale`, `RotationRadians`, `RotationDegrees`, `Status`
  
  Properties:
  
  * `IsPanImmediate` Set to true to receive the PanCommand or PanPointCommand event on touch down, instead of after a minimum move distance. Default to false.
+
+If you define the `CommandParameter` property, some gestures will callback the command with this parameter's value.  
+Example:
+
+```c#
+<ContentPage x:Name="ThePage" ...>
+    <CollectionView ...>
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                    <Grid
+                      ui:Gesture.TapCommand="{Binding BindingContext.MyItemTappedCommand, Source={x:Reference ThePage}}"
+                      ui:Gesture.CommandParameter="{Binding .}">
+                        <Label Text="{Binding SomeText}" />
+                    </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+</ContentPage
+```
+
+
+
  
 # Examples
 
