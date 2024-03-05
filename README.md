@@ -56,18 +56,18 @@ And in the viewmodel:
 ```
 # Supported Gestures
 
- *  `TapCommand (ICommand or ICommand<CommandParameter>)` if CommandParameter is set (see below)
- *  `DoubleTapCommand (ICommand) or ICommand<CommandParameter>`
- *  `PanCommand (ICommand) or ICommand<CommandParameter>`
- *  `LongPressCommand (ICommand) or ICommand<CommandParameter>`
+ *  `TapCommand (ICommand or Command<CommandParameter>)` if CommandParameter is set (see below)
+ *  `DoubleTapCommand (ICommand) or Command<CommandParameter>`
+ *  `PanCommand (ICommand) or Command<CommandParameter>`
+ *  `LongPressCommand (ICommand) or Command<CommandParameter>`
  *  `TapPointCommand (ICommand or Command<Point>)` where point is the absolute tap position relative to the view
  *  `DoubleTapPoinCommand (ICommand or Command<Point>)` where point is the absolute double tap position relative to the view
  *  `PanPointCommand (ICommand or Command<PanEventArgs>)` where point is the absolute position relative to the view
  *  `LongPressPointCommand (ICommand or Command<Point>) ` where point is the absolute tap position relative to the view
- *  `SwipeLeftCommand (ICommand) or ICommand<CommandParameter>`
- *  `SwipeRightCommand (ICommand) or ICommand<CommandParameter>`
- *  `SwipeTopCommand (ICommand) or ICommand<CommandParameter>`
- *  `SwipeBottomCommand (ICommand) or ICommand<CommandParameter>`
+ *  `SwipeLeftCommand (ICommand) or Command<CommandParameter>`
+ *  `SwipeRightCommand (ICommand) or Command<CommandParameter>`
+ *  `SwipeTopCommand (ICommand) or Command<CommandParameter>`
+ *  `SwipeBottomCommand (ICommand) or Command<CommandParameter>`
  *  `PinchCommand (Command<PinchEventArgs>)` where `PinchEventArg` contains `StartingPoints`, `CurrentPoints`, `Center`, `Scale`, `RotationRadians`, `RotationDegrees`, `Status`
  
  Properties:
