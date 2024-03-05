@@ -23,8 +23,8 @@
         <None Include="../LICENSE" Pack="true" PackagePath="" />
         <None Include="../README.md" Pack="true" PackagePath="" />
         <None Include="../icon.png" Pack="true" PackagePath="" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.6" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.6" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.7" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="8.0.7" />
     </ItemGroup>
     
     <!--  nuget configurable properties -->

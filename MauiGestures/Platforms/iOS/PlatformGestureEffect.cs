@@ -8,9 +8,6 @@ namespace MauiGestures;
 
 internal partial class PlatformGestureEffect : PlatformEffect
 {
-    private readonly UITapGestureRecognizer tapDetector, doubleTapDetector;
-    private readonly UILongPressGestureRecognizer longPressDetector;
-    private readonly UISwipeGestureRecognizer swipeLeftDetector, swipeRightDetector, swipeUpDetector, swipeDownDetector;
     private readonly UIImmediatePanGestureRecognizer panDetector;
     private readonly UIImmediatePinchGestureRecognizer pinchDetector;
     private readonly List<UIGestureRecognizer> recognizers;
@@ -20,19 +17,19 @@ internal partial class PlatformGestureEffect : PlatformEffect
     /// Take a Point parameter
     /// Except panPointCommand which takes a (Point,GestureStatus) parameter (its a tuple) 
     /// </summary>
-    private ICommand tapPointCommand, panPointCommand, doubleTapPointCommand, longPressPointCommand;
+    private ICommand? tapPointCommand, panPointCommand, doubleTapPointCommand, longPressPointCommand;
         
     /// <summary>
     /// No parameter
     /// </summary>
-    private ICommand tapCommand, panCommand, doubleTapCommand, longPressCommand, swipeLeftCommand, swipeRightCommand, swipeTopCommand, swipeBottomCommand;
+    private ICommand? tapCommand, panCommand, doubleTapCommand, longPressCommand, swipeLeftCommand, swipeRightCommand, swipeTopCommand, swipeBottomCommand;
 
     /// <summary>
     /// 1 parameter: PinchEventArgs
     /// </summary>
-    private ICommand pinchCommand;
+    private ICommand? pinchCommand;
         
-    private object commandParameter;
+    private object? commandParameter;
 
     public PlatformGestureEffect()
     {
@@ -41,24 +38,24 @@ internal partial class PlatformGestureEffect : PlatformEffect
         //else
         //    tapDetector.ShouldReceiveTouch = (s, args) => true;
 
-        tapDetector = CreateTapRecognizer(() => (tapCommand,tapPointCommand));
-        doubleTapDetector = CreateTapRecognizer(() => (doubleTapCommand, doubleTapPointCommand));
+        var tapDetector = CreateTapRecognizer(() => (tapCommand,tapPointCommand));
+        var doubleTapDetector = CreateTapRecognizer(() => (doubleTapCommand, doubleTapPointCommand));
         doubleTapDetector.NumberOfTapsRequired = 2;
-        longPressDetector = CreateLongPressRecognizer(() => (longPressCommand, longPressPointCommand));
+        var longPressDetector = CreateLongPressRecognizer(() => (longPressCommand, longPressPointCommand));
+
         panDetector = CreatePanRecognizer(() => (panCommand, panPointCommand));
         pinchDetector = CreatePinchRecognizer(() => pinchCommand);
 
-        swipeLeftDetector = CreateSwipeRecognizer(() => swipeLeftCommand, UISwipeGestureRecognizerDirection.Left);
-        swipeRightDetector = CreateSwipeRecognizer(() => swipeRightCommand, UISwipeGestureRecognizerDirection.Right);
-        swipeUpDetector = CreateSwipeRecognizer(() => swipeTopCommand, UISwipeGestureRecognizerDirection.Up);
-        swipeDownDetector = CreateSwipeRecognizer(() => swipeBottomCommand, UISwipeGestureRecognizerDirection.Down);
+        var swipeLeftDetector = CreateSwipeRecognizer(() => swipeLeftCommand, UISwipeGestureRecognizerDirection.Left);
+        var swipeRightDetector = CreateSwipeRecognizer(() => swipeRightCommand, UISwipeGestureRecognizerDirection.Right);
+        var swipeUpDetector = CreateSwipeRecognizer(() => swipeTopCommand, UISwipeGestureRecognizerDirection.Up);
+        var swipeDownDetector = CreateSwipeRecognizer(() => swipeBottomCommand, UISwipeGestureRecognizerDirection.Down);
 
-
-        recognizers = new()
-        {
+        recognizers =
+        [
             tapDetector, doubleTapDetector, longPressDetector, panDetector, pinchDetector,
             swipeLeftDetector, swipeRightDetector, swipeUpDetector, swipeDownDetector
-        };
+        ];
     }
 
     private UITapGestureRecognizer CreateTapRecognizer(Func<(ICommand? Command,ICommand? PointCommand)> getCommand)
@@ -78,7 +75,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
         })
         {
             Enabled = false,
-            ShouldRecognizeSimultaneously = (recognizer, gestureRecognizer) => true,
+            ShouldRecognizeSimultaneously = (_, _) => true,
             //ShouldReceiveTouch = (recognizer, touch) => true,
         };
     }
@@ -103,13 +100,13 @@ internal partial class PlatformGestureEffect : PlatformEffect
         })
         {
             Enabled = false,
-            ShouldRecognizeSimultaneously = (recognizer, gestureRecognizer) => true,
+            ShouldRecognizeSimultaneously = (_, _) => true,
             //ShouldReceiveTouch = (recognizer, touch) => true,
         };
     }
 
 
-    private UISwipeGestureRecognizer CreateSwipeRecognizer(Func<ICommand> getCommand, UISwipeGestureRecognizerDirection direction)
+    private UISwipeGestureRecognizer CreateSwipeRecognizer(Func<ICommand?> getCommand, UISwipeGestureRecognizerDirection direction)
     {
         return new (() =>
         {
@@ -119,12 +116,12 @@ internal partial class PlatformGestureEffect : PlatformEffect
         })
         {
             Enabled = false,
-            ShouldRecognizeSimultaneously = (recognizer, gestureRecognizer) => true,
+            ShouldRecognizeSimultaneously = (_, _) => true,
             Direction = direction
         };
     }
         
-    private UIImmediatePinchGestureRecognizer CreatePinchRecognizer(Func<ICommand> getCommand)
+    private UIImmediatePinchGestureRecognizer CreatePinchRecognizer(Func<ICommand?> getCommand)
     {
         return new (recognizer =>
         {
@@ -173,7 +170,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
         })
         {
             Enabled = false,
-            ShouldRecognizeSimultaneously = (recognizer, other) => true,
+            ShouldRecognizeSimultaneously = (_, _) => true,
         };
     }
 
@@ -214,7 +211,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
         })
         {
             Enabled = false,
-            ShouldRecognizeSimultaneously = (recognizer, other) => true,
+            ShouldRecognizeSimultaneously = (_, _) => true,
             MaximumNumberOfTouches = 1,
             ShouldBegin = recognizer =>
             {
