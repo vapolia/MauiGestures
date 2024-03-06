@@ -60,10 +60,10 @@ And in the viewmodel:
  *  `DoubleTapCommand (ICommand) or Command<CommandParameter>`
  *  `PanCommand (ICommand) or Command<CommandParameter>`
  *  `LongPressCommand (ICommand) or Command<CommandParameter>`
- *  `TapPointCommand (ICommand or Command<Point>)` where point is the absolute tap position relative to the view
- *  `DoubleTapPoinCommand (ICommand or Command<Point>)` where point is the absolute double tap position relative to the view
+ *  `TapPointCommand (ICommand or Command<PointEventArgs>)` where point is the absolute tap position relative to the view
+ *  `DoubleTapPoinCommand (ICommand or Command<PointEventArgs>)` where point is the absolute double tap position relative to the view
  *  `PanPointCommand (ICommand or Command<PanEventArgs>)` where point is the absolute position relative to the view
- *  `LongPressPointCommand (ICommand or Command<Point>) ` where point is the absolute tap position relative to the view
+ *  `LongPressPointCommand (ICommand or Command<PointEventArgs>) ` where point is the absolute tap position relative to the view
  *  `SwipeLeftCommand (ICommand) or Command<CommandParameter>`
  *  `SwipeRightCommand (ICommand) or Command<CommandParameter>`
  *  `SwipeTopCommand (ICommand) or Command<CommandParameter>`
@@ -72,7 +72,7 @@ And in the viewmodel:
  
  Properties:
  
- * `IsPanImmediate` Set to true to receive the PanCommand or PanPointCommand event on touch down, instead of after a minimum move distance. Default to false.
+ * `IsPanImmediate` Set to true to receive the PanCommand or PanPointCommand event on touch down, instead of after a minimum move distance. Default to `false`.
 
 If you define the `CommandParameter` property, some gestures will callback the command with this parameter's value.  
 Example:
