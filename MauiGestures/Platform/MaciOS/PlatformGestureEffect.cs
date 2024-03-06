@@ -13,24 +13,6 @@ internal partial class PlatformGestureEffect : PlatformEffect
     private readonly List<UIGestureRecognizer> recognizers;
     private (Point Origin0, Point Origin1) pinchOrigin, lastPinch;
 
-    /// <summary>
-    /// Take a Point parameter
-    /// Except panPointCommand which takes a (Point,GestureStatus) parameter (its a tuple) 
-    /// </summary>
-    private ICommand? tapPointCommand, panPointCommand, doubleTapPointCommand, longPressPointCommand;
-        
-    /// <summary>
-    /// No parameter
-    /// </summary>
-    private ICommand? tapCommand, panCommand, doubleTapCommand, longPressCommand, swipeLeftCommand, swipeRightCommand, swipeTopCommand, swipeBottomCommand;
-
-    /// <summary>
-    /// 1 parameter: PinchEventArgs
-    /// </summary>
-    private ICommand? pinchCommand;
-        
-    private object? commandParameter;
-
     public PlatformGestureEffect()
     {
         //if (!allSubviews)
@@ -58,6 +40,14 @@ internal partial class PlatformGestureEffect : PlatformEffect
         ];
     }
 
+    private PointEventArgs GetPointArgs(UIGestureRecognizer recognizer)
+    {
+        var control = Control ?? Container;
+        var point = recognizer.LocationInView(control).ToPoint();
+        var args = new PointEventArgs(point, Element, Element.BindingContext);
+        return args;
+    }
+
     private UITapGestureRecognizer CreateTapRecognizer(Func<(ICommand? Command,ICommand? PointCommand)> getCommand)
     {
         return new (recognizer =>
@@ -65,12 +55,12 @@ internal partial class PlatformGestureEffect : PlatformEffect
             var (command, pointCommand) = getCommand();
             if (command != null || pointCommand != null)
             {
-                var control = Control ?? Container;
-                var point = recognizer.LocationInView(control);
                 if (command?.CanExecute(commandParameter) == true)
                     command.Execute(commandParameter);
-                if(pointCommand?.CanExecute(point) == true)
-                    pointCommand.Execute(point);
+                
+                var args = GetPointArgs(recognizer);
+                if(pointCommand?.CanExecute(args) == true)
+                    pointCommand.Execute(args);
             }
         })
         {
@@ -89,12 +79,12 @@ internal partial class PlatformGestureEffect : PlatformEffect
                 var (command, pointCommand) = getCommand();
                 if (command != null || pointCommand != null)
                 {
-                    var control = Control ?? Container;
-                    var point = recognizer.LocationInView(control);
                     if (command?.CanExecute(commandParameter) == true)
                         command.Execute(commandParameter);
-                    if (pointCommand?.CanExecute(point) == true)
-                        pointCommand.Execute(point);
+
+                    var args = GetPointArgs(recognizer);
+                    if (pointCommand?.CanExecute(args) == true)
+                        pointCommand.Execute(args);
                 }
             }
         })
@@ -238,29 +228,6 @@ internal partial class PlatformGestureEffect : PlatformEffect
                 return false;
             }
         };
-    }
-
-    protected override void OnElementPropertyChanged(PropertyChangedEventArgs args)
-    {
-        tapCommand = Gesture.GetTapCommand(Element);
-        panCommand = Gesture.GetPanCommand(Element);
-        panDetector.IsImmediate = Gesture.GetIsPanImmediate(Element);
-        pinchCommand = Gesture.GetPinchCommand(Element);
-        pinchDetector.IsImmediate = Gesture.GetIsPinchImmediate(Element);
-        doubleTapCommand = Gesture.GetDoubleTapCommand(Element);
-        longPressCommand = Gesture.GetLongPressCommand(Element);
-
-        swipeLeftCommand = Gesture.GetSwipeLeftCommand(Element);
-        swipeRightCommand = Gesture.GetSwipeRightCommand(Element);
-        swipeTopCommand = Gesture.GetSwipeTopCommand(Element);
-        swipeBottomCommand = Gesture.GetSwipeBottomCommand(Element);
-
-        tapPointCommand = Gesture.GetTapPointCommand(Element);
-        panPointCommand = Gesture.GetPanPointCommand(Element);
-        doubleTapPointCommand = Gesture.GetDoubleTapPointCommand(Element);
-        longPressPointCommand = Gesture.GetLongPressPointCommand(Element);
-
-        commandParameter = Gesture.GetCommandParameter(Element);
     }
 
     protected override partial void OnAttached()

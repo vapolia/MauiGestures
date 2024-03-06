@@ -11,19 +11,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
 {
     readonly GestureRecognizer detector;
     int swipeThresholdInPoints = 40;
-    private object? commandParameter;
-    
-    /// <summary>
-    /// Take a Point parameter
-    /// Except panPointCommand which takes a (Point,GestureStatus) parameter (its a tuple) 
-    /// </summary>
-    private ICommand tapPointCommand, panPointCommand, doubleTapPointCommand, longPressPointCommand;
-    
-    /// <summary>
-    /// No parameter
-    /// </summary>
-    private ICommand tapCommand, panCommand, doubleTapCommand, longPressCommand, swipeLeftCommand, swipeRightCommand, swipeTopCommand, swipeBottomCommand;
-    
+
     public PlatformGestureEffect()
     {
         detector = new()
@@ -59,12 +47,14 @@ internal partial class PlatformGestureEffect : PlatformEffect
             if (args.TapCount == 1)
             {
                 TriggerCommand(tapCommand, commandParameter);
-                TriggerCommand(tapPointCommand, new Point(args.Position.X, args.Position.Y));
+                var pointArgs = new PointEventArgs(new Point(args.Position.X, args.Position.Y), Element, Element.BindingContext);
+                TriggerCommand(tapPointCommand, pointArgs);
             }
             else if (args.TapCount == 2) 
             {
                 TriggerCommand(doubleTapCommand, commandParameter);
-                TriggerCommand(doubleTapPointCommand, new Point(args.Position.X, args.Position.Y));
+                var pointArgs = new PointEventArgs(new Point(args.Position.X, args.Position.Y), Element, Element.BindingContext);
+                TriggerCommand(doubleTapPointCommand, pointArgs);
             }
         };
 
@@ -73,7 +63,8 @@ internal partial class PlatformGestureEffect : PlatformEffect
             if(args.HoldingState == HoldingState.Started) 
             {
                 TriggerCommand(longPressCommand, commandParameter);
-                TriggerCommand(longPressPointCommand, new Point(args.Position.X, args.Position.Y));
+                var pointArgs = new PointEventArgs(new Point(args.Position.X, args.Position.Y), Element, Element.BindingContext);
+                TriggerCommand(longPressPointCommand, pointArgs);
             }
         };
 
@@ -107,27 +98,6 @@ internal partial class PlatformGestureEffect : PlatformEffect
     {
         if(command?.CanExecute(parameter) == true)
             command.Execute(parameter);
-    }
-
-    protected override void OnElementPropertyChanged(PropertyChangedEventArgs args)
-    {
-        tapCommand = Gesture.GetTapCommand(Element);
-        panCommand = Gesture.GetPanCommand(Element);
-        doubleTapCommand = Gesture.GetDoubleTapCommand(Element);
-        longPressCommand = Gesture.GetLongPressCommand(Element);
-
-        swipeLeftCommand = Gesture.GetSwipeLeftCommand(Element);
-        swipeRightCommand = Gesture.GetSwipeRightCommand(Element);
-        swipeTopCommand = Gesture.GetSwipeTopCommand(Element);
-        swipeBottomCommand = Gesture.GetSwipeBottomCommand(Element);
-
-        tapPointCommand = Gesture.GetTapPointCommand(Element);
-        panPointCommand = Gesture.GetPanPointCommand(Element);
-        doubleTapPointCommand = Gesture.GetDoubleTapPointCommand(Element);
-        longPressPointCommand = Gesture.GetLongPressPointCommand(Element);
-
-        swipeThresholdInPoints = Gesture.GetSwipeThreshold(Element);
-        commandParameter = Gesture.GetCommandParameter(Element);
     }
 
     protected override partial void OnAttached()

@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Windows.Input;
 using Android.Util;
 using Android.Views;
 using Microsoft.Maui.Controls.Platform;
@@ -11,25 +10,8 @@ internal partial class PlatformGestureEffect : PlatformEffect
 {
     private GestureDetector? gestureRecognizer;
     private readonly InternalGestureDetector tapDetector;
-    private DisplayMetrics displayMetrics;
-    private object commandParameter;
+    private DisplayMetrics? displayMetrics;
 
-    /// <summary>
-    /// Take a Point parameter
-    /// Except panPointCommand which takes a PanEventArgs parameter 
-    /// </summary>
-    private ICommand? tapPointCommand, panPointCommand, doubleTapPointCommand, longPressPointCommand;
-        
-    /// <summary>
-    /// No parameter
-    /// </summary>
-    private ICommand? tapCommand, panCommand, doubleTapCommand, longPressCommand, swipeLeftCommand, swipeRightCommand, swipeTopCommand, swipeBottomCommand;
-
-    /// <summary>
-    /// 1 parameter: PinchEventArgs
-    /// </summary>
-    private ICommand pinchCommand;
-        
     public PlatformGestureEffect()
     {
         tapDetector = new()
@@ -37,14 +19,15 @@ internal partial class PlatformGestureEffect : PlatformEffect
             SwipeThresholdInPoints = 40,
             TapAction = motionEvent =>
             {
-                if (tapPointCommand != null)
+                if (tapPointCommand != null && motionEvent != null)
                 {
                     var x = motionEvent.GetX();
                     var y = motionEvent.GetY();
-
                     var point = PxToDp(new Point(x,y));
-                    if (tapPointCommand.CanExecute(point))
-                        tapPointCommand.Execute(point);
+                    var args = new PointEventArgs(point, Element, Element.BindingContext);
+
+                    if (tapPointCommand.CanExecute(args))
+                        tapPointCommand.Execute(args);
                 }
 
                 if(tapCommand != null) {
@@ -54,13 +37,14 @@ internal partial class PlatformGestureEffect : PlatformEffect
             },
             DoubleTapAction = motionEvent =>
             {
-                if (doubleTapPointCommand != null) {
+                if (doubleTapPointCommand != null && motionEvent != null) {
                     var x = motionEvent.GetX();
                     var y = motionEvent.GetY();
-
                     var point = PxToDp(new Point(x, y));
-                    if (doubleTapPointCommand.CanExecute(point))
-                        doubleTapPointCommand.Execute(point);
+                    var args = new PointEventArgs(point, Element, Element.BindingContext);
+
+                    if (doubleTapPointCommand.CanExecute(args))
+                        doubleTapPointCommand.Execute(args);
                 }
 
                 if (doubleTapCommand != null) {
@@ -100,7 +84,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
             {
                 var continueGesture = true;
                     
-                if (panPointCommand != null)
+                if (panPointCommand != null && currentMove != null)
                 {
                     var x = currentMove.GetX();
                     var y = currentMove.GetY();
@@ -131,7 +115,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
             },
             PinchAction = (initialDown, currentMove) =>
             {
-                if (pinchCommand != null)
+                if (pinchCommand != null && currentMove != null)
                 {
                     var origin0 = PxToDp(new Point(initialDown.GetX(0), initialDown.GetY(0)));
                     var origin1 = PxToDp(new Point(initialDown.GetX(1), initialDown.GetY(1)));
@@ -154,14 +138,15 @@ internal partial class PlatformGestureEffect : PlatformEffect
             },
             LongPressAction = motionEvent =>
             {
-                if (longPressPointCommand != null)
+                if (longPressPointCommand != null && motionEvent != null)
                 {
                     var x = motionEvent.GetX();
                     var y = motionEvent.GetY();
-
                     var point = PxToDp(new Point(x, y));
-                    if (longPressPointCommand.CanExecute(point))
-                        longPressPointCommand.Execute(point);
+                    var args = new PointEventArgs(point, Element, Element.BindingContext);
+
+                    if (longPressPointCommand.CanExecute(args))
+                        longPressPointCommand.Execute(args);
                 }
 
                 if (longPressCommand != null) {
@@ -177,30 +162,6 @@ internal partial class PlatformGestureEffect : PlatformEffect
         point.X /= displayMetrics.Density;
         point.Y /= displayMetrics.Density;
         return point;
-    }
-
-    protected override void OnElementPropertyChanged(PropertyChangedEventArgs args)
-    {
-        tapCommand = Gesture.GetTapCommand(Element);
-        panCommand = Gesture.GetPanCommand(Element);
-        pinchCommand = Gesture.GetPinchCommand(Element);
-        tapDetector.IsPinchImmediate = Gesture.GetIsPinchImmediate(Element);
-        tapDetector.IsPanImmediate = Gesture.GetIsPanImmediate(Element);
-        doubleTapCommand = Gesture.GetDoubleTapCommand(Element);
-        longPressCommand = Gesture.GetLongPressCommand(Element);
-
-        swipeLeftCommand = Gesture.GetSwipeLeftCommand(Element);
-        swipeRightCommand = Gesture.GetSwipeRightCommand(Element);
-        swipeTopCommand = Gesture.GetSwipeTopCommand(Element);
-        swipeBottomCommand = Gesture.GetSwipeBottomCommand(Element);
-
-        tapPointCommand = Gesture.GetTapPointCommand(Element);
-        panPointCommand = Gesture.GetPanPointCommand(Element);
-        doubleTapPointCommand = Gesture.GetDoubleTapPointCommand(Element);
-        longPressPointCommand = Gesture.GetLongPressPointCommand(Element);
-
-        tapDetector.SwipeThresholdInPoints = Gesture.GetSwipeThreshold(Element);
-        commandParameter = Gesture.GetCommandParameter(Element);
     }
 
     protected override partial void OnAttached()
@@ -219,9 +180,10 @@ internal partial class PlatformGestureEffect : PlatformEffect
         OnElementPropertyChanged(new PropertyChangedEventArgs(String.Empty));
     }
 
-    private void ControlOnTouch(object sender, View.TouchEventArgs touchEventArgs)
+    private void ControlOnTouch(object? sender, View.TouchEventArgs touchEventArgs)
     {
-        gestureRecognizer?.OnTouchEvent(touchEventArgs.Event);
+        if( touchEventArgs.Event != null)
+            gestureRecognizer?.OnTouchEvent(touchEventArgs.Event);
         touchEventArgs.Handled = false;
     }
 
@@ -250,9 +212,9 @@ internal partial class PlatformGestureEffect : PlatformEffect
                 myGestureListener = my;
         }
 
-        public override bool OnTouchEvent(MotionEvent? e)
+        public override bool OnTouchEvent(MotionEvent e)
         {
-            if (myGestureListener != null && e?.Action == MotionEventActions.Up)
+            if (myGestureListener != null && e.Action == MotionEventActions.Up)
                 myGestureListener.OnUp(e);
             return base.OnTouchEvent(e);
         }
