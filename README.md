@@ -9,7 +9,8 @@ iOS, Android, Windows, Mac
 # Maui Gesture Effects
 
 Add "advanced" gestures to Maui. Available on all views.
-Most gesture commands include the event position.
+Most gesture commands include the event position.  
+Combine this feature with UserInteraction.Menu() to display a standart menu at the position of the finger. Useful especially for tablets. See the demo app in this repo on how to do it.
 
 ```xaml
     <Label Text="Click here" IsEnabled="True" ui:Gesture.TapCommand="{Binding OpenLinkCommand}" />
@@ -56,19 +57,21 @@ And in the viewmodel:
 ```
 # Supported Gestures
 
- *  `TapCommand (ICommand or Command<CommandParameter>)` if CommandParameter is set (see below)
- *  `DoubleTapCommand (ICommand) or Command<CommandParameter>`
- *  `PanCommand (ICommand) or Command<CommandParameter>`
- *  `LongPressCommand (ICommand) or Command<CommandParameter>`
- *  `TapPointCommand (ICommand or Command<PointEventArgs>)` where point is the absolute tap position relative to the view
- *  `DoubleTapPoinCommand (ICommand or Command<PointEventArgs>)` where point is the absolute double tap position relative to the view
- *  `PanPointCommand (ICommand or Command<PanEventArgs>)` where point is the absolute position relative to the view
- *  `LongPressPointCommand (ICommand or Command<PointEventArgs>) ` where point is the absolute tap position relative to the view
- *  `SwipeLeftCommand (ICommand) or Command<CommandParameter>`
- *  `SwipeRightCommand (ICommand) or Command<CommandParameter>`
- *  `SwipeTopCommand (ICommand) or Command<CommandParameter>`
- *  `SwipeBottomCommand (ICommand) or Command<CommandParameter>`
+ *  `TapCommand (ICommand or Command<YourClass>)` if `CommandParameter` is set (see below)
+ *  `DoubleTapCommand (ICommand) or Command<YourClass>` if `CommandParameter` is set (see below)
+ *  `PanCommand (ICommand) or Command<YourClass>` if `CommandParameter` is set (see below)
+ *  `LongPressCommand (ICommand) or Command<YourClass>` if `CommandParameter` is set (see below)
+ *  `TapPointCommand (ICommand or Command<PointEventArgs>)`
+ *  `DoubleTapPoinCommand (ICommand or Command<PointEventArgs>)`
+ *  `PanPointCommand (ICommand or Command<PanEventArgs>)`
+ *  `LongPressPointCommand (ICommand or Command<PointEventArgs>)`
+ *  `SwipeLeftCommand (ICommand) or Command<YourClass>` if `CommandParameter` is set (see below)
+ *  `SwipeRightCommand (ICommand) or Command<YourClass>` if `CommandParameter` is set (see below)
+ *  `SwipeTopCommand (ICommand) or Command<YourClass>` if `CommandParameter` is set (see below)
+ *  `SwipeBottomCommand (ICommand) or Command<YourClass>` if `CommandParameter` is set (see below)
  *  `PinchCommand (Command<PinchEventArgs>)` where `PinchEventArg` contains `StartingPoints`, `CurrentPoints`, `Center`, `Scale`, `RotationRadians`, `RotationDegrees`, `Status`
+
+`PointEventArgs` contains the absolute tap position relative to the view, the instance of the control triggering the command, and the BindingContext associated with that control. With that feature, the gestures can easily be used on `CollectionView`'s items.
  
  Properties:
  
@@ -93,7 +96,7 @@ Example:
 </ContentPage
 ```
 
-
+Note that the above example can be simplified by using `TapPointCommand` instead of `TapCommand`. `TapPointCommand` already provides the BindingContext in its `PointEventArgs` parameter to your command.
 
  
 # Examples
@@ -101,13 +104,13 @@ Example:
 ## Some commands in XAML
 
 ```xml
-<StackLayout ui:Gesture.TapCommand="{Binding OpenCommand}" IsEnabled="True">
+<VerticalStackLayout ui:Gesture.TapCommand="{Binding OpenCommand}" IsEnabled="True">
     <Label Text="1.Tap this text to open an url" />
-</StackLayout>
+</VerticalStackLayout>
 
-<StackLayout ui:Gesture.DoubleTapPointCommand="{Binding OpenPointCommand}" IsEnabled="True">
+<VerticalStackLayout ui:Gesture.DoubleTapPointCommand="{Binding OpenPointCommand}" IsEnabled="True">
     <Label Text="2.Double tap this text to open an url" />
-</StackLayout>
+</VerticalStackLayout>
 
 <BoxView
     ui:Gesture.PanPointCommand="{Binding PanPointCommand}"
@@ -125,8 +128,9 @@ public ICommand OpenCommand => new Command(async () =>
    //...
 });
 
-public ICommand OpenPointCommand => new Command<Point>(point =>
+public ICommand OpenPointCommand => new Command<PointEventArgs>(args =>
 {
+    var point = args.Point;
     PanX = point.X;
     PanY = point.Y;
     //...
@@ -146,8 +150,9 @@ public ICommand PanPointCommand => new Command<PanEventArgs>(args =>
 
 ```csharp
 //Tap anywhere to set value
-Gesture.SetTapPointCommand(this, new Command<Point>(pt =>
+Gesture.SetTapPointCommand(this, new Command<PointEventArgs>(args =>
 {
+    var pt = args.Point;
     var delta = (pt.X - Padding.Left) / (Width - Padding.Left - Padding.Right);
     if(delta<0 || delta>1)
         return;
@@ -164,7 +169,7 @@ Swipe commands are not supported on Windows because of a curious bug (event not 
 PinchCommand is not supported (yet) on Windows. PR welcome.
 
 If your command is not receiving events, make sure that:
-- you used the correct handler. Ie: the `LongPressPointCommand` should be `new Command<Point>(pt => ...)`
+- you used the correct handler. Ie: the `LongPressPointCommand` should be `new Command<PointEventArgs>(args => ...)`
 - you set `IsEnabled="True"` and `InputTransparent="False"` on the element
 
 Windows requires the fall creator update.  
