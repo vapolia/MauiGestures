@@ -1,0 +1,105 @@
+<ContentPage
+    x:Class="DemoApp.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:mauiGestures="clr-namespace:MauiGestures;assembly=MauiGestures"
+    xmlns:viewModels="clr-namespace:DemoApp.ViewModels"
+    x:DataType="viewModels:MainPageViewModel"
+    BackgroundColor="AntiqueWhite"
+    Title="Gestures Demo">
+    <ContentPage.Resources>
+        <Style TargetType="Label">
+            <Setter Property="TextColor" Value="Black"/>
+        </Style>
+    </ContentPage.Resources> 
+    
+       <VerticalStackLayout Spacing="20" Padding="20">
+
+        <!--  ios: gestures does not work directly on a forms label  -->
+        <VerticalStackLayout mauiGestures:Gesture.TapCommand="{Binding OpenVapoliaCommand}" IsEnabled="True">
+            <Label Text="1.Tap this text to open an url" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout mauiGestures:Gesture.DoubleTapPointCommand="{Binding OpenVapoliaPointCommand}" IsEnabled="True">
+            <Label Text="2.Double tap this text to open an url" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout mauiGestures:Gesture.LongPressPointCommand="{Binding OpenVapoliaPointCommand}" IsEnabled="True">
+            <Label Text="3.Long press this text to open an url" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout mauiGestures:Gesture.SwipeLeftCommand="{Binding OpenVapoliaCommand}" IsEnabled="True">
+            <Label Text="4.Swipe left on this text to open an url" BackgroundColor="Red" />
+        </VerticalStackLayout>
+
+        <VerticalStackLayout>
+            <Label Text="5.Drag a finger in this space" />
+            <BoxView
+                mauiGestures:Gesture.IsPanImmediate="True"
+                mauiGestures:Gesture.PanPointCommand="{Binding PanPointCommand}"
+                BackgroundColor="Yellow"
+                HeightRequest="100"
+                InputTransparent="False"
+                IsEnabled="True"
+                WidthRequest="300" />
+            <VerticalStackLayout>
+                <Label>
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="dX: " />
+                            <Span Text="{Binding Pan.X,StringFormat='{0:0.##}'}" />
+                            <Span Text=" / dY: " />
+                            <Span Text="{Binding Pan.Y,StringFormat='{0:0.##}'}" />
+                            <Span Text=" / Event: " />
+                            <Span Text="{Binding PanStatus}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout>
+            <Label Text="6.Pinch with 2 fingers in this space" />
+            <BoxView
+                mauiGestures:Gesture.PinchCommand="{Binding PinchCommand}"
+                BackgroundColor="Yellow"
+                HeightRequest="150"
+                InputTransparent="False"
+                IsEnabled="True"
+                WidthRequest="300" />
+            <HorizontalStackLayout Spacing="20">
+                <Label>
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Center: " />
+                            <Span Text="{Binding Pinch.X}" />
+                            <Span Text=" ; " />
+                            <Span Text="{Binding Pinch.Y}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <Label>
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Rotation: " />
+                            <Span Text="{Binding Rotation, StringFormat='{0:0.00}°'}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+                <Label>
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="Scale: " />
+                            <Span Text="{Binding Scale, StringFormat='{0:0.00}'}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+    </VerticalStackLayout>
+    
+</ContentPage>

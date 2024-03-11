@@ -34,28 +34,31 @@ internal partial class PlatformGestureEffect : PlatformEffect
     
     protected override void OnElementPropertyChanged(PropertyChangedEventArgs args)
     {
-        tapCommand = Gesture.GetTapCommand(Element);
-        panCommand = Gesture.GetPanCommand(Element);
+        if (args.PropertyName is not "X" and not "Y" and not "Width" and not "Height")
+        {
+            tapCommand = Gesture.GetTapCommand(Element);
+            panCommand = Gesture.GetPanCommand(Element);
 
-        pinchCommand = Gesture.GetPinchCommand(Element);
-        doubleTapCommand = Gesture.GetDoubleTapCommand(Element);
-        longPressCommand = Gesture.GetLongPressCommand(Element);
+            pinchCommand = Gesture.GetPinchCommand(Element);
+            doubleTapCommand = Gesture.GetDoubleTapCommand(Element);
+            longPressCommand = Gesture.GetLongPressCommand(Element);
 
-        swipeLeftCommand = Gesture.GetSwipeLeftCommand(Element);
-        swipeRightCommand = Gesture.GetSwipeRightCommand(Element);
-        swipeTopCommand = Gesture.GetSwipeTopCommand(Element);
-        swipeBottomCommand = Gesture.GetSwipeBottomCommand(Element);
+            swipeLeftCommand = Gesture.GetSwipeLeftCommand(Element);
+            swipeRightCommand = Gesture.GetSwipeRightCommand(Element);
+            swipeTopCommand = Gesture.GetSwipeTopCommand(Element);
+            swipeBottomCommand = Gesture.GetSwipeBottomCommand(Element);
 
-        tapPointCommand = Gesture.GetTapPointCommand(Element);
-        panPointCommand = Gesture.GetPanPointCommand(Element);
-        doubleTapPointCommand = Gesture.GetDoubleTapPointCommand(Element);
-        longPressPointCommand = Gesture.GetLongPressPointCommand(Element);
+            tapPointCommand = Gesture.GetTapPointCommand(Element);
+            panPointCommand = Gesture.GetPanPointCommand(Element);
+            doubleTapPointCommand = Gesture.GetDoubleTapPointCommand(Element);
+            longPressPointCommand = Gesture.GetLongPressPointCommand(Element);
 
-        commandParameter = Gesture.GetCommandParameter(Element);
-        
+            commandParameter = Gesture.GetCommandParameter(Element);
+
 #if IOS || MACCATALYST
-        panDetector.IsImmediate = Gesture.GetIsPanImmediate(Element);
-        pinchDetector.IsImmediate = Gesture.GetIsPinchImmediate(Element);
+            panDetector.IsImmediate = Gesture.GetIsPanImmediate(Element);
+            pinchDetector.IsImmediate = Gesture.GetIsPinchImmediate(Element);
 #endif
+        }
     }
 }
