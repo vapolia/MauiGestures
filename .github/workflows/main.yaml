@@ -1,12 +1,12 @@
 name: Publish To Nuget
 
 on:
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
 #  pull_request:
 #  push:
   release:
     types: [published]
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
     
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
     #Needs windows to build the windows version
     runs-on: windows-latest
     env:
-      NUPKG_MAJOR: 1.0.2
+      NUPKG_MAJOR: 1.0.4
       DOTNET_CLI_TELEMETRY_OPTOUT: true
       DOTNET_NOLOGO: true
       PROJECT: MauiGestures/MauiGestures.csproj
@@ -35,7 +35,7 @@ jobs:
         shell: pwsh
         run: dotnet build -c Release $PROJECT
       
-      - name: Package & Publish NuGets
+      - name: Package NuGets
         shell: pwsh
         env:
           #required so if it contains special characters they are not interpreted by powershell
