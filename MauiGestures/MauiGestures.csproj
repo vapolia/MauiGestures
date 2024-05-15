@@ -64,7 +64,7 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageProjectUrl>https://vapolia.eu</PackageProjectUrl>
         <PackageReleaseNotes>
-            4.0.2: Remove IsPanImmediate from android gestures, as it was preventing the reception of the GestureStatus.Started event
+            1.0.4: Remove IsPanImmediate from android gestures, as it was preventing the reception of the GestureStatus.Started event
             1.0.2: UseAdvancedGestures instead of AddAdvancedGestures
             1.0.1: net6 to net8
             1.0.0: MAUI initial version
