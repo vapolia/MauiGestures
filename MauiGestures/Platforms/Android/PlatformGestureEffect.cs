@@ -1,12 +1,11 @@
 using System.ComponentModel;
 using Android.Util;
 using Android.Views;
-using Microsoft.Maui.Controls.Platform;
 using View = Android.Views.View;
 
 namespace MauiGestures;
 
-internal partial class PlatformGestureEffect : PlatformEffect
+internal partial class PlatformGestureEffect
 {
     private GestureDetector? gestureRecognizer;
     private readonly InternalGestureDetector tapDetector;
@@ -231,8 +230,6 @@ internal partial class PlatformGestureEffect : PlatformEffect
         private MotionEvent? pinchInitialDown;
 
         public int SwipeThresholdInPoints { get; set; }
-        public bool IsPanImmediate { get; set; }
-        public bool IsPinchImmediate { get; set; }
 
         public Action<MotionEvent?>? TapAction { get; set; }
         public Action<MotionEvent?>? DoubleTapAction { get; set; }
@@ -259,23 +256,21 @@ internal partial class PlatformGestureEffect : PlatformEffect
             return true;
         }
 
-        public override void OnLongPress(MotionEvent? e)
-        {
-            LongPressAction?.Invoke(e);
-        }
+        public override void OnLongPress(MotionEvent? e) 
+            => LongPressAction?.Invoke(e);
 
         public override bool OnDown(MotionEvent? e)
         {
-            if (e!=null && IsPanImmediate && e.PointerCount == 1 && PanAction != null)
-                return PanAction.Invoke(e, e);
-
-            if (e != null && IsPinchImmediate && e.PointerCount == 2 && PinchAction != null)
+            switch (e)
             {
-                PinchAction?.Invoke(e, e);
-                return true;
+                case { PointerCount: 1 } when PanAction != null:
+                    return PanAction.Invoke(e, e);
+                case { PointerCount: 2 } when PinchAction != null:
+                    PinchAction?.Invoke(e, e);
+                    return true;
+                default:
+                    return false;
             }
-
-            return false;
         }
 
         public void OnUp(MotionEvent? e)
@@ -294,13 +289,13 @@ internal partial class PlatformGestureEffect : PlatformEffect
                 if (pinchInitialDown == null && initialDown.PointerCount == 1 && currentMove.PointerCount == 2)
                     pinchInitialDown = MotionEvent.Obtain(currentMove);
                     
-                if(currentMove.PointerCount == 1 && PanAction != null)
-                    return PanAction.Invoke(initialDown, currentMove);
-
-                if (currentMove.PointerCount == 2 && PinchAction != null && pinchInitialDown != null)
+                switch (currentMove.PointerCount)
                 {
-                    PinchAction.Invoke(pinchInitialDown, currentMove);
-                    return true;
+                    case 1 when PanAction != null:
+                        return PanAction.Invoke(initialDown, currentMove);
+                    case 2 when PinchAction != null && pinchInitialDown != null:
+                        PinchAction.Invoke(pinchInitialDown, currentMove);
+                        return true;
                 }
             }
             return false;

@@ -29,7 +29,7 @@
         <None Include="../LICENSE" Pack="true" PackagePath="" />
         <None Include="../README.md" Pack="true" PackagePath="" />
         <None Include="../icon.png" Pack="true" PackagePath="" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.10" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.40" />
     </ItemGroup>
 
     <ItemGroup>
@@ -64,6 +64,7 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageProjectUrl>https://vapolia.eu</PackageProjectUrl>
         <PackageReleaseNotes>
+            4.0.2: Remove IsPanImmediate from android gestures, as it was preventing the reception of the GestureStatus.Started event
             1.0.2: UseAdvancedGestures instead of AddAdvancedGestures
             1.0.1: net6 to net8
             1.0.0: MAUI initial version
