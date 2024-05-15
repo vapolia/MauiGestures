@@ -281,9 +281,9 @@ internal partial class PlatformGestureEffect
             pinchInitialDown = null;
         }
 
-        public override bool OnScroll(MotionEvent? initialDown, MotionEvent? currentMove, float distanceX, float distanceY)
+        public override bool OnScroll(MotionEvent? initialDown, MotionEvent currentMove, float distanceX, float distanceY)
         {
-            if (initialDown != null && currentMove != null)
+            if (initialDown != null)
             {
                 //Switch to pinch
                 if (pinchInitialDown == null && initialDown.PointerCount == 1 && currentMove.PointerCount == 2)
