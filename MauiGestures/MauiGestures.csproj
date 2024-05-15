@@ -56,7 +56,7 @@
         <Owners>Benjamin Mayrargue</Owners>
         <NeutralLanguage>en</NeutralLanguage>
         <Copyright>© 2016-2024 Benjamin Mayrargue</Copyright>
-        <RepositoryUrl>https://github.com/softlion/XamarinFormsGesture</RepositoryUrl>
+        <RepositoryUrl>https://github.com/vapolia/MauiGestures/</RepositoryUrl>
         <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
