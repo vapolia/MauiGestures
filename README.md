@@ -10,11 +10,16 @@ iOS, Android, Windows, Mac
 
 Add "advanced" gestures to Maui. Available on all views.
 Most gesture commands include the event position.  
-Combine this feature with UserInteraction.Menu() to display a standart menu at the position of the finger. Useful especially for tablets. See the demo app in this repo on how to do it.
+Combine this feature with `UserInteraction.Menu()` (from [this nuget](https://github.com/softlion/UserInteraction/)) to display a standart menu at the position of the finger. Useful especially for tablets. See the demo app in this repo on how to do it.
 
 ```xaml
-    <Label Text="Click here" IsEnabled="True" ui:Gesture.TapCommand="{Binding OpenLinkCommand}" />
+    <Label
+       Text="Click here"
+       ui:Gesture.TapCommand="{Binding OpenLinkCommand}"
+       ui:Gesture.CommandParameter="{Binding .}" />
 ```
+`CommandParameter` is optional.
+
 Or in code:
 ```csharp
     var label = new Label();
@@ -31,7 +36,7 @@ using MauiGestures;
 builder.UseAdvancedGestures();
 ``` 
 
-The views on which the gesture is applied should have the property `IsEnabled="True"` and `InputTransparent="False"` which activates user interaction on them.
+The view on which the gesture is applied should have the property `InputTransparent="False"` which activates user interaction on it. If the view is still not receiving tap events, try adding a background color. That forces Maui to wrap some controls in an invisible container.
 
 # Examples
 
@@ -77,6 +82,12 @@ And in the viewmodel:
  
  * `IsPanImmediate` Set to true to receive the PanCommand or PanPointCommand event on touch down, instead of after a minimum move distance. Default to `false`.
 
+## Using Command Parameters
+
+Important note:  
+You can not set a binding in the main command's parameter. Even if it is accepted and no error is displayed, the resulting parameter will always be null. That's a maui limiation.  
+Instead, you should use the MauiGesture's `CommandParameter` attached property:
+
 If you define the `CommandParameter` property, some gestures will callback the command with this parameter's value.  
 Example:
 
@@ -97,6 +108,7 @@ Example:
 ```
 
 Note that the above example can be simplified by using `TapPointCommand` instead of `TapCommand`. `TapPointCommand` already provides the BindingContext in its `PointEventArgs` parameter to your command.
+
 
  
 # Examples
