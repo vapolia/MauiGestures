@@ -142,7 +142,9 @@ internal partial class PlatformGestureEffect : PlatformEffect
 
     private void ControlOnPointerMoved(object sender, PointerRoutedEventArgs pointerRoutedEventArgs)
     {
-        detector.ProcessMoveEvents(pointerRoutedEventArgs.GetIntermediatePoints(Control ?? Container));
+        detector.ProcessMoveEvents(returnAllPointsOnWindows ? 
+            pointerRoutedEventArgs.GetIntermediatePoints(Control ?? Container)
+            : new List<PointerPoint> { pointerRoutedEventArgs.GetCurrentPoint(Control ?? Container) });
         pointerRoutedEventArgs.Handled = true;
     }
 

@@ -48,6 +48,9 @@ public static class Gesture
     public static readonly BindableProperty SwipeThresholdProperty = BindableProperty.CreateAttached("SwipeThreshold", typeof(int), typeof(Gesture), 40, propertyChanged: CommandChanged);
     public static readonly BindableProperty CommandParameterProperty = BindableProperty.CreateAttached("CommandParameter", typeof(object), typeof(Gesture), null);
 
+    //Windows only
+    public static readonly BindableProperty ReturnAllPointsOnWindowsProperty = BindableProperty.CreateAttached("ReturnAllPointsOnWindows", typeof(bool), typeof(Gesture), false, propertyChanged: CommandChanged);
+    
     public static ICommand GetLongPressCommand(BindableObject view) => (ICommand)view.GetValue(LongPressCommandProperty);
     public static ICommand GetTapCommand(BindableObject view) => (ICommand)view.GetValue(TapCommandProperty);
     public static ICommand GetDoubleTapCommand(BindableObject view) => (ICommand)view.GetValue(DoubleTapCommandProperty);
@@ -76,6 +79,9 @@ public static class Gesture
     /// Take a (Point,GestureStatus) parameter (it is a tuple) 
     /// </summary>
     public static ICommand GetPanPointCommand(BindableObject view) => (ICommand)view.GetValue(PanPointCommandProperty);
+    
+    
+    public static bool GetReturnAllPointsOnWindows(BindableObject view) => (bool)view.GetValue(ReturnAllPointsOnWindowsProperty);
 
     public static void SetLongPressCommand(BindableObject view, ICommand value) => view.SetValue(LongPressCommandProperty, value);
     public static void SetTapCommand(BindableObject view, ICommand value) => view.SetValue(TapCommandProperty, value);
