@@ -8,7 +8,7 @@
 
         <!-- .NET MAUI -->
         <UseMaui>true</UseMaui>
-        <MauiVersion>8.0.40</MauiVersion>
+        <MauiVersion>8.0.80</MauiVersion>
         <SingleProject>true</SingleProject>
 
         <!-- Project Options -->
