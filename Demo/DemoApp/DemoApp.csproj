@@ -8,7 +8,7 @@
 
         <!-- .NET MAUI -->
         <UseMaui>true</UseMaui>
-        <MauiVersion>8.0.80</MauiVersion>
+        <MauiVersion>8.0.91</MauiVersion>
         <SingleProject>true</SingleProject>
 
         <!-- Project Options -->
@@ -52,8 +52,8 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.*" Condition="'$(Configuration)' == 'Debug'" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.80" />
-        <PackageReference Include="Vapolia.Svg" Version="1.0.4" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="8.0.91" />
+        <PackageReference Include="Vapolia.Svg" Version="1.0.5" />
         <PackageReference Include="Vapolia.UserInteraction" Version="4.0.2" />
     </ItemGroup>
 
