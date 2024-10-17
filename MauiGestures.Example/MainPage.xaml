@@ -1,0 +1,56 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:ui="clr-namespace:MauiGestures;assembly=MauiGestures"
+             x:Class="MauiGestures.Example.MainPage">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <Label Text="MauiGestures Demo" 
+               FontSize="24" 
+               HorizontalOptions="Center" 
+               Margin="0,20,0,0"/>
+
+        <ScrollView Grid.Row="1">
+            <StackLayout Padding="20">
+
+                <Label Text="{Binding GestureText}"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       FontSize="Large" />
+
+                <BoxView x:Name="EventBox"
+                         Color="{Binding BoxColor}"
+                         WidthRequest="200"
+                         HeightRequest="200"
+                         HorizontalOptions="Center" 
+                         ui:Gesture.TapPointCommand="{Binding TapPointCommand}"
+                         ui:Gesture.RightTapCommand="{Binding RightTapCommand}"
+                         ui:Gesture.TapCommand="{Binding TapCommand}"
+                         ui:Gesture.RightTapPointCommand="{Binding RightTapPointCommand}"
+                         ui:Gesture.DoubleTapCommand="{Binding DoubleTapCommand}"
+                         ui:Gesture.DoubleTapPointCommand="{Binding DoubleTapPointCommand}"
+                         ui:Gesture.LongPressCommand="{Binding LongPressCommand}"
+                         ui:Gesture.LongPressPointCommand="{Binding LongPressPointCommand}"
+                         ui:Gesture.PanCommand="{Binding PanCommand}"
+                         ui:Gesture.PanPointCommand="{Binding PanPointCommand}"
+                         ui:Gesture.PinchCommand="{Binding PinchCommand}"
+                         ui:Gesture.PinchPointCommand="{Binding PinchPointCommand}"
+                         ui:Gesture.SwipeCommand="{Binding SwipeCommand}"/>
+
+                <Label Text="{Binding GestureInfo}"
+                       HorizontalOptions="Center"
+                       Margin="0,20,0,0" />
+            </StackLayout>
+        </ScrollView>
+
+        <StackLayout Grid.Row="2" 
+                     Orientation="Horizontal" 
+                     HorizontalOptions="Center"
+                     Margin="0,0,0,20">
+            <Button Text="Reset" 
+                    Command="{Binding ResetCommand}"
+                    Margin="0,0,10,0" />
+            <Button Text="Toggle Mode" 
+                    Command="{Binding ToggleModeCommand}" />
+        </StackLayout>
+    </Grid>
+</ContentPage> 

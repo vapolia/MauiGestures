@@ -1,34 +1,43 @@
-﻿using System;
-using Foundation;
+﻿using Foundation;
 using UIKit;
 
-namespace MauiGestures;
-
-internal class UIImmediatePinchGestureRecognizer : UIPinchGestureRecognizer
+namespace MauiGestures.Platform.MaciOS
 {
-    public bool IsImmediate { get; set; } = false;
-
-    public UIImmediatePinchGestureRecognizer()
+    internal class UIImmediatePinchGestureRecognizer : UIPinchGestureRecognizer
     {
-    }
+        #region Constructors
+        public UIImmediatePinchGestureRecognizer()
+        {
+        }
 
-    public UIImmediatePinchGestureRecognizer(Action action) : base(action)
-    {
-    }
+        public UIImmediatePinchGestureRecognizer(Action action) : base(action)
+        {
+        }
 
-    public UIImmediatePinchGestureRecognizer(Action<UIPinchGestureRecognizer> action) : base(action)
-    {
-    }
+        public UIImmediatePinchGestureRecognizer(Action<UIPinchGestureRecognizer> action) : base(action)
+        {
+        }
 
-    [Preserve]
-    protected internal UIImmediatePinchGestureRecognizer(IntPtr handle) : base(handle)
-    {
-    }
+        [Preserve]
+        protected internal UIImmediatePinchGestureRecognizer(IntPtr handle) : base(handle)
+        {
+        }
 
-    public override void TouchesBegan(NSSet touches, UIEvent evt)
-    {
-        base.TouchesBegan(touches, evt);
-        if (IsImmediate)
-            State = UIGestureRecognizerState.Began;
+        #endregion Constructors
+
+        #region Properties
+        internal bool IsImmediate { get; set; } = false;
+
+        #endregion Properties
+
+        #region Methods
+        public override void TouchesBegan(NSSet touches, UIEvent evt)
+        {
+            base.TouchesBegan(touches, evt);
+            if (IsImmediate)
+                State = UIGestureRecognizerState.Began;
+        }
+
+        #endregion Methods
     }
 }
