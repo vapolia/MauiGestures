@@ -77,7 +77,7 @@ public partial class GestureCommand<T> : ICommand<T>
     }
 
     /// <summary>
-    /// Event that is raised when the <see cref="CanExecute"/> method changes.
+    /// Event that is raised when the <see cref="RaiseCanExecuteChanged"/> method changes.
     /// </summary>
     public event EventHandler? CanExecuteChanged;
 
