@@ -13,9 +13,8 @@ namespace MauiGestures.Platform
         private readonly GestureRecognizer _detector;
         private bool isHolding;
         private bool isPotentialSwipe;
-        private bool isControlKeyDown;
-        private readonly int swipeThresholdInPoints = 40;
-        private readonly long swipeDurationInMs = 200;
+        private readonly int swipeThresholdInPoints = 30;
+        private readonly long swipeDurationInMs = 150;
         private Point? dragStartPoint;
         private DateTime pointerPressedTime;
 
@@ -52,7 +51,7 @@ namespace MauiGestures.Platform
                     var parameters = new PanArgs(currentPoint, gestureStatus);
                     TriggerCommand(panCommand, commandParameter);
                     TriggerCommand(panPointCommand, parameters);
-                    TriggerEvent(panEvent, parameters);
+                    TriggerEvent(PanEvent, parameters);
                     return;
                 }
 
@@ -70,7 +69,7 @@ namespace MauiGestures.Platform
                             var swipeDirection = GetSwipeDirection(deltaX, deltaY);
                             var swipeArgs = new SwipeArgs(swipeDirection, distance, currentPoint);
                             TriggerCommand(swipeCommand, swipeArgs);
-                            TriggerEvent(swipeEvent, swipeArgs);
+                            TriggerEvent(SwipeEvent, swipeArgs);
                         }
                     }
                 }
@@ -88,14 +87,14 @@ namespace MauiGestures.Platform
                     TriggerCommand(tapCommand, commandParameter);
                     var pointArgs = new PointArgs(new Point(args.Position.X, args.Position.Y), Element, Element.BindingContext);
                     TriggerCommand(tapPointCommand, pointArgs);
-                    TriggerEvent(tapEvent, pointArgs);
+                    TriggerEvent(TapEvent, pointArgs);
                 }
                 else if (args.TapCount == 2)
                 {
                     TriggerCommand(doubleTapCommand, commandParameter);
                     var pointArgs = new PointArgs(new Point(args.Position.X, args.Position.Y), Element, Element.BindingContext);
                     TriggerCommand(doubleTapPointCommand, pointArgs);
-                    TriggerEvent(doubleTapEvent, pointArgs);
+                    TriggerEvent(DoubleTapEvent, pointArgs);
                 }
             };
 
@@ -106,7 +105,7 @@ namespace MauiGestures.Platform
                     TriggerCommand(rightTabCommand, commandParameter);
                     var pointArgs = new PointArgs(new Point(args.Position.X, args.Position.Y), Element, Element.BindingContext);
                     TriggerCommand(rightTapPointCommand, pointArgs);
-                    TriggerEvent(rightTapEvent, pointArgs);
+                    TriggerEvent(RightTapEvent, pointArgs);
                 }
             };
 
@@ -118,18 +117,18 @@ namespace MauiGestures.Platform
                     TriggerCommand(longPressCommand, commandParameter);
                     var pointArgs = new PointArgs(new Point(args.Position.X, args.Position.Y), Element, Element.BindingContext);
                     TriggerCommand(longPressPointCommand, pointArgs);
-                    TriggerEvent(longPressEvent, pointArgs);
+                    TriggerEvent(LongPressEvent, pointArgs);
                 }
             };
         }
 
         #endregion Constructors
 
-            #region Properties
+        #region Properties
 
-            #endregion Properties
+        #endregion Properties
 
-            #region Methods
+        #region Methods
         protected override partial void OnAttached()
         {
             var control = Control ?? Container;
