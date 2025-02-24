@@ -4,26 +4,24 @@ using Microsoft.UI.Xaml.Input;
 using MauiGestures.GestureArgs;
 using Microsoft.UI.Input;
 using GestureRecognizer = Microsoft.UI.Input.GestureRecognizer;
+using Microsoft.Maui.Platform;
 
 namespace MauiGestures.Platform
 {
     internal partial class GestureEffect : PlatformEffect
     {
         #region Fields
-        private readonly GestureRecognizer _detector;
         private bool isHolding;
-        private bool isPotentialSwipe;
-        private readonly int swipeThresholdInPoints = 30;
-        private readonly long swipeDurationInMs = 150;
-        private Point? dragStartPoint;
-        private DateTime pointerPressedTime;
+        private readonly GestureRecognizer _gestureRecognizer;
+        private readonly SwipeGestureRecognizer _swipeGestureRecognizer;
+        private readonly PinchGestureRecognizer _pinchGestureRecognizer;
 
         #endregion Fields
 
         #region Constructors
         public GestureEffect()
         {
-            _detector = new()
+            _gestureRecognizer = new()
             {
                 GestureSettings =
                    GestureSettings.Tap
@@ -32,16 +30,36 @@ namespace MauiGestures.Platform
                    | GestureSettings.DoubleTap
                    | GestureSettings.Hold
                    | GestureSettings.HoldWithMouse
+                   | GestureSettings.ManipulationScale
             };
 
-            _detector.Dragging += (sender, args) =>
+            _swipeGestureRecognizer = new SwipeGestureRecognizer();
+            _pinchGestureRecognizer = new PinchGestureRecognizer();
+
+            _swipeGestureRecognizer.Swiped += (sender, e) =>
+            {
+                var swipeArgs = new SwipeArgs(e.Direction);
+                TriggerCommand(swipeCommand, swipeArgs);
+                TriggerEvent(SwipeEvent, swipeArgs);
+            };
+
+            _swipeGestureRecognizer.Direction = SwipeDirection.Left | SwipeDirection.Right | SwipeDirection.Up | SwipeDirection.Down;
+
+            _pinchGestureRecognizer.PinchUpdated += (sender, e) =>
+            {
+                var startingPoints = (e.ScaleOrigin, e.ScaleOrigin);
+                var currentPoints = (e.ScaleOrigin, e.ScaleOrigin);
+                var pinchArgs = new PinchArgs(e.Status, currentPoints, startingPoints);
+                TriggerCommand(pinchCommand, pinchArgs);
+                TriggerEvent(PinchEvent, pinchArgs);
+            };
+
+            _gestureRecognizer.Dragging += (sender, args) =>
             {
                 var currentPoint = new Point(args.Position.X, args.Position.Y);
 
                 if (args.DraggingState == DraggingState.Started)
                 {
-                    isPotentialSwipe = true;
-                    dragStartPoint = currentPoint;
                     return;
                 }
 
@@ -55,32 +73,13 @@ namespace MauiGestures.Platform
                     return;
                 }
 
-                if (args.DraggingState == DraggingState.Completed && dragStartPoint.HasValue && isPotentialSwipe)
-                {
-                    var swipeDuration = DateTime.Now - pointerPressedTime;
-                    if (swipeDuration.TotalMilliseconds <= swipeDurationInMs)
-                    {
-                        var deltaX = currentPoint.X - dragStartPoint.Value.X;
-                        var deltaY = currentPoint.Y - dragStartPoint.Value.Y;
-                        var distance = Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
-
-                        if (distance >= swipeThresholdInPoints)
-                        {
-                            var swipeDirection = GetSwipeDirection(deltaX, deltaY);
-                            var swipeArgs = new SwipeArgs(swipeDirection, distance, currentPoint);
-                            TriggerCommand(swipeCommand, swipeArgs);
-                            TriggerEvent(SwipeEvent, swipeArgs);
-                        }
-                    }
-                }
-
                 if (args.DraggingState == DraggingState.Completed)
                 {
                     ResetStates();
                 }
             };
 
-            _detector.Tapped += (sender, args) =>
+            _gestureRecognizer.Tapped += (sender, args) =>
             {
                 if (args.TapCount == 1)
                 {
@@ -98,18 +97,18 @@ namespace MauiGestures.Platform
                 }
             };
 
-            _detector.RightTapped += (sender, args) =>
+            _gestureRecognizer.RightTapped += (sender, args) =>
             {
                 if (!isHolding)
                 {
-                    TriggerCommand(rightTabCommand, commandParameter);
+                    TriggerCommand(rightTapCommand, commandParameter);
                     var pointArgs = new PointArgs(new Point(args.Position.X, args.Position.Y), Element, Element.BindingContext);
                     TriggerCommand(rightTapPointCommand, pointArgs);
                     TriggerEvent(RightTapEvent, pointArgs);
                 }
             };
 
-            _detector.Holding += (sender, args) =>
+            _gestureRecognizer.Holding += (sender, args) =>
             {
                 if (args.HoldingState == HoldingState.Started)
                 {
@@ -119,6 +118,16 @@ namespace MauiGestures.Platform
                     TriggerCommand(longPressPointCommand, pointArgs);
                     TriggerEvent(LongPressEvent, pointArgs);
                 }
+            };
+
+            _gestureRecognizer.ManipulationUpdated+= (sender, args) =>
+            {
+                TriggerCommand(pinchCommand, commandParameter);
+                var startingPoints = (args.Position.ToPoint(), args.Position.ToPoint());
+                var currentPoints = (args.Position.ToPoint(), args.Position.ToPoint());
+                var pinchArgs = new PinchArgs(GestureStatus.Running, currentPoints, startingPoints);
+                TriggerCommand(pinchCommand, pinchArgs);
+                TriggerEvent(PinchEvent, pinchArgs);
             };
         }
 
@@ -163,9 +172,8 @@ namespace MauiGestures.Platform
 
         private void ControlOnPointerPressed(object sender, PointerRoutedEventArgs pointerRoutedEventArgs)
         {
-            _detector.CompleteGesture();
-            _detector.ProcessDownEvent(pointerRoutedEventArgs.GetCurrentPoint(Control ?? Container));
-            pointerPressedTime = DateTime.Now;
+            _gestureRecognizer.CompleteGesture();
+            _gestureRecognizer.ProcessDownEvent(pointerRoutedEventArgs.GetCurrentPoint(Control ?? Container));
             pointerRoutedEventArgs.Handled = true;
         }
 
@@ -181,7 +189,7 @@ namespace MauiGestures.Platform
 
         private void ControlOnPointerMoved(object sender, PointerRoutedEventArgs pointerRoutedEventArgs)
         {
-            _detector.ProcessMoveEvents(returnAllPointsOnWindows ?
+            _gestureRecognizer.ProcessMoveEvents(returnAllPointsOnWindows ?
                 pointerRoutedEventArgs.GetIntermediatePoints(Control ?? Container)
                 : new List<PointerPoint> { pointerRoutedEventArgs.GetCurrentPoint(Control ?? Container) });
             pointerRoutedEventArgs.Handled = true;
@@ -189,38 +197,21 @@ namespace MauiGestures.Platform
 
         private void ControlOnPointerCanceled(object sender, PointerRoutedEventArgs args)
         {
-            _detector.CompleteGesture();
+            _gestureRecognizer.CompleteGesture();
             ResetStates();
             args.Handled = true;
         }
 
         private void ControlOnPointerReleased(object sender, PointerRoutedEventArgs pointerRoutedEventArgs)
         {
-            _detector.ProcessUpEvent(pointerRoutedEventArgs.GetCurrentPoint(Control ?? Container));
+            _gestureRecognizer.ProcessUpEvent(pointerRoutedEventArgs.GetCurrentPoint(Control ?? Container));
             ResetStates();
             pointerRoutedEventArgs.Handled = true;
         }
 
         private void ResetStates()
         {
-            dragStartPoint = null;
-            isPotentialSwipe = false;
             isHolding = false;
-        }
-
-        private SwipeDirection GetSwipeDirection(double deltaX, double deltaY)
-        {
-            var absX = Math.Abs(deltaX);
-            var absY = Math.Abs(deltaY);
-
-            if (absX > absY)
-            {
-                return deltaX > 0 ? SwipeDirection.Right : SwipeDirection.Left;
-            }
-            else
-            {
-                return deltaY > 0 ? SwipeDirection.Down : SwipeDirection.Up;
-            }
         }
 
         #endregion Methods

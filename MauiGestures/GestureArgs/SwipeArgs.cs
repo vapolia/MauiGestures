@@ -13,7 +13,7 @@ public class SwipeArgs : EventArgs
     /// <param name="direction"></param>
     /// <param name="distance"></param>
     /// <param name="position"></param>
-    public SwipeArgs(SwipeDirection direction, double distance, Point position)
+    public SwipeArgs(SwipeDirection direction, double distance = 0, Point position = new Point())
     {
         Direction = direction;
         Distance = distance;

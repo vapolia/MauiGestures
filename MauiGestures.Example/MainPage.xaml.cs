@@ -22,37 +22,37 @@ namespace MauiGestures.Example
 
         private void OnPinch(PinchArgs args)
         {
-            Debug.WriteLine("Pinched " + args.Scale + ", " + args.Status.ToString());
+            Debug.WriteLine("Pinched Event " + args.Scale + ", " + args.Status.ToString());
         }
 
         private void OnPan(PanArgs args)
         {
-            Debug.WriteLine("Panned X:" + args.Point.X + ", Y:" + args.Point.Y + ", " + args.Status.ToString());
+            Debug.WriteLine("Panned Event X:" + args.Point.X + ", Y:" + args.Point.Y + ", " + args.Status.ToString());
         }
 
         private void OnSwiped(SwipeArgs args)
         {
-            Debug.WriteLine("Swiped " + args.Direction + ", " + args.Distance + ", " + args.Position);
+            Debug.WriteLine("Swiped Event " + args.Direction + ", " + args.Distance + ", " + args.Position);
         }
 
         private void OnLongPressed(PointArgs args)
         {
-            Debug.WriteLine("Long pressed at " + args.Point);
+            Debug.WriteLine("Long pressed Event at " + args.Point);
         }
 
         private void OnDoubleTapped(PointArgs args)
         {
-            Debug.WriteLine("Double tapped at " + args.Point);
+            Debug.WriteLine("Double tapped Event at " + args.Point);
         }
 
         private void OnRightTapped(PointArgs args)
         {
-            Debug.WriteLine("Right tapped at " + args.Point);
+            Debug.WriteLine("Right tapped Event at " + args.Point);
         }
 
         private void OnTapped(PointArgs args)
         {
-            Debug.WriteLine("Tapped at " + args.Point);
+            Debug.WriteLine("Tapped Event at " + args.Point);
         }
     }
 
