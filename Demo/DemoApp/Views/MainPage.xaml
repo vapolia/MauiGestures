@@ -11,6 +11,10 @@
         <Style TargetType="Label">
             <Setter Property="TextColor" Value="Black"/>
         </Style>
+        <Style TargetType="VerticalStackLayout">
+            <Setter Property="Padding" Value="0,8"/>
+            <Setter Property="Spacing" Value="10"/>
+        </Style>
     </ContentPage.Resources> 
     
        <VerticalStackLayout Spacing="20" Padding="20">
@@ -28,8 +32,9 @@
             <Label Text="3.Long press this text to open an url" />
         </VerticalStackLayout>
 
-        <VerticalStackLayout mauiGestures:Gesture.SwipeLeftCommand="{Binding OpenVapoliaCommand}" IsEnabled="True">
-            <Label Text="4.Swipe left on this text to open an url" BackgroundColor="Red" />
+        <VerticalStackLayout mauiGestures:Gesture.SwipeLeftCommand="{Binding TextSwipedCommand}" 
+                             IsEnabled="True" BackgroundColor="Orange">
+            <Label Text="4.Swipe left on this text to open an url" InputTransparent="True" />
         </VerticalStackLayout>
 
         <VerticalStackLayout>

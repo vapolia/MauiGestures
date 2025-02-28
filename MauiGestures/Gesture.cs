@@ -17,6 +17,9 @@ public static class Gesture
     public static readonly BindableProperty DoubleTapCommandProperty = BindableProperty.CreateAttached("DoubleTapCommand", typeof(ICommand), typeof(Gesture), null, propertyChanged: CommandChanged);
     public static readonly BindableProperty PanCommandProperty = BindableProperty.CreateAttached("PanCommand", typeof(ICommand), typeof(Gesture), null, propertyChanged: CommandChanged);
     public static readonly BindableProperty PinchCommandProperty = BindableProperty.CreateAttached("PinchCommand", typeof(ICommand), typeof(Gesture), null, propertyChanged: CommandChanged);
+    /// <summary>
+    /// Determines whether pinch gesture should fire immediately on iOS/macOS.
+    /// </summary>
     public static readonly BindableProperty IsPinchImmediateProperty = BindableProperty.CreateAttached("IsPinchImmediate", typeof(bool), typeof(Gesture), false, propertyChanged: CommandChanged);
     
     public static readonly BindableProperty SwipeLeftCommandProperty = BindableProperty.CreateAttached("SwipeLeftCommand", typeof(ICommand), typeof(Gesture), null, propertyChanged: CommandChanged);
@@ -37,7 +40,7 @@ public static class Gesture
     /// </summary>
     public static readonly BindableProperty DoubleTapPointCommandProperty = BindableProperty.CreateAttached("DoubleTapPointCommand", typeof(ICommand), typeof(Gesture), null, propertyChanged: CommandChanged);
     /// <summary>
-    /// Take a (Point,GestureStatus) parameter (it is a tuple) 
+    /// Take a (Point,GestureStatus) parameter (it's a tuple) 
     /// </summary>
     public static readonly BindableProperty PanPointCommandProperty = BindableProperty.CreateAttached("PanPointCommand", typeof(ICommand), typeof(Gesture), null, propertyChanged: CommandChanged);
     public static readonly BindableProperty IsPanImmediateProperty = BindableProperty.CreateAttached("IsPanImmediate", typeof(bool), typeof(Gesture), false, propertyChanged: CommandChanged);

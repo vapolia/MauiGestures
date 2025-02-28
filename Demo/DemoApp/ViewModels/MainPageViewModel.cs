@@ -1,5 +1,4 @@
-﻿using System.Drawing;
-using System.Windows.Input;
+﻿using System.Windows.Input;
 using MauiGestures;
 using Vapolia.UserInteraction;
 using Point = Microsoft.Maui.Graphics.Point;
@@ -39,6 +38,17 @@ public class MainPageViewModel : BindableObject
         Scale = args.Scale;
     });
 
+    public ICommand TextSwipedCommand => new Command(async () =>
+    {
+        await UserInteraction.Alert("Swipe gesture detected", "Item swiped");
+
+        // await navigation.PushAsync(new ContentPage {
+        //     Title = "Web",
+        //     Content = new Grid {
+        //         BackgroundColor = Yellow,
+        //         Children = { new WebView { Source = new UrlWebViewSource { Url = "https://vapolia.fr" }, HorizontalOptions = LayoutOptions.Fill, VerticalOptions = LayoutOptions.Fill} }}});
+    });
+    
     public ICommand OpenVapoliaCommand => new Command(async () =>
     {
         await UserInteraction.Alert("Open Vapolia command received", "Item tapped");

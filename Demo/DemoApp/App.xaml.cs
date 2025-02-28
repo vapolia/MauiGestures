@@ -6,15 +6,15 @@
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
             UserAppTheme = PlatformAppTheme;
         }
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            var window = base.CreateWindow(activationState);
-            window.Title = "DemoApp";
-            return window;
+            return new Window(new MainPage())
+            {
+                Title = "DemoApp"
+            };
         }
     }
 }
