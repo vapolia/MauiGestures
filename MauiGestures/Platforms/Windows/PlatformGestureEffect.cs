@@ -4,6 +4,7 @@ using Microsoft.Maui.Controls.Platform;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Input;
 using GestureRecognizer = Microsoft.UI.Input.GestureRecognizer;
+using Microsoft.UI.Xaml;
 
 namespace MauiGestures;
 
@@ -135,6 +136,10 @@ internal partial class PlatformGestureEffect : PlatformEffect
 
     private void ControlOnPointerPressed(object sender, PointerRoutedEventArgs pointerRoutedEventArgs)
     {
+        var element = sender as UIElement;
+        if (element != null)
+            element.CapturePointer(pointerRoutedEventArgs.Pointer);
+
         detector.CompleteGesture();
         detector.ProcessDownEvent(pointerRoutedEventArgs.GetCurrentPoint(Control ?? Container));
         pointerRoutedEventArgs.Handled = true;
@@ -152,12 +157,20 @@ internal partial class PlatformGestureEffect : PlatformEffect
     {
         detector.CompleteGesture();
         args.Handled = true;
+
+        var element = sender as UIElement;
+        if (element != null)
+            element.ReleasePointerCapture(args.Pointer);
     }
 
     private void ControlOnPointerReleased(object sender, PointerRoutedEventArgs pointerRoutedEventArgs)
     {
         detector.ProcessUpEvent(pointerRoutedEventArgs.GetCurrentPoint(Control ?? Container));
         pointerRoutedEventArgs.Handled = true;
+
+        var element = sender as UIElement;
+        if (element != null)
+            element.ReleasePointerCapture(pointerRoutedEventArgs.Pointer);
     }
 }
 
