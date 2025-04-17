@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.Diagnostics;
+using System.Windows.Input;
 using MauiGestures;
 using Vapolia.UserInteraction;
 using Point = Microsoft.Maui.Graphics.Point;
@@ -22,7 +23,6 @@ public class MainPageViewModel : BindableObject
     {
         this.navigation = navigation;
     }
-
         
     public ICommand PanPointCommand => new Command<PanEventArgs>(args =>
     {
@@ -40,7 +40,17 @@ public class MainPageViewModel : BindableObject
 
     public ICommand TextSwipedCommand => new Command(async () =>
     {
-        await UserInteraction.Alert("Swipe gesture detected", "Item swiped");
+        var message = "Swipe gesture detected";
+
+        try
+        {
+            await UserInteraction.Alert(message, "Item swiped");
+        }
+        catch (NotImplementedException)
+        {
+            // Fall back to debug console output
+            Trace.WriteLine(message);
+        }
 
         // await navigation.PushAsync(new ContentPage {
         //     Title = "Web",
@@ -51,7 +61,17 @@ public class MainPageViewModel : BindableObject
     
     public ICommand OpenVapoliaCommand => new Command(async () =>
     {
-        await UserInteraction.Alert("Open Vapolia command received", "Item tapped");
+        var message = "Open Vapolia command received";
+
+        try
+        {
+            await UserInteraction.Alert(message, "Item tapped");
+        }
+        catch (NotImplementedException)
+        {
+            // Fall back to debug console output
+            Trace.WriteLine(message);
+        }
 
         // await navigation.PushAsync(new ContentPage {
         //     Title = "Web",
@@ -65,9 +85,17 @@ public class MainPageViewModel : BindableObject
     {
         Pan = args.Point;
         var absXy = args.GetCoordinates();
-        
-        await UserInteraction.Alert($"Open Vapolia Point command received at position ({args.Point.X:0.0},{args.Point.Y:0.0}) relative to the element, and ({absXy.X:0.0},{absXy.Y:0.0}) relative to the root view", "Item tapped");
+        var message = $"Open Vapolia Point command received at position ({args.Point.X:0.0},{args.Point.Y:0.0}) relative to the element, and ({absXy.X:0.0},{absXy.Y:0.0}) relative to the root view";
 
-        await UserInteraction.Menu(default, position: args.GetAbsoluteBoundsF(), cancelButton: "Cancel", otherButtons: ["Do something"]);
+        try
+        {
+            await UserInteraction.Alert(message, "Item tapped");
+            await UserInteraction.Menu(default, position: args.GetAbsoluteBoundsF(), cancelButton: "Cancel", otherButtons: ["Do something"]);
+        }
+        catch (NotImplementedException)
+        {
+            // Fall back to console output
+            Trace.WriteLine(message);
+        }
     });
 }
