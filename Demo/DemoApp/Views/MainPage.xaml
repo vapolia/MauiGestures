@@ -25,16 +25,16 @@
         </VerticalStackLayout>
 
         <VerticalStackLayout mauiGestures:Gesture.DoubleTapPointCommand="{Binding OpenDoubleTapPointCommand}" IsEnabled="True">
-            <Label Text="2.Double tap this text to open an url" />
+            <Label Text="2.Double tap this text" />
         </VerticalStackLayout>
 
         <VerticalStackLayout mauiGestures:Gesture.LongPressPointCommand="{Binding OpenLongPressPointCommand}" IsEnabled="True">
-            <Label Text="3.Long press this text to open an url" />
+            <Label Text="3.Long press this text" />
         </VerticalStackLayout>
 
         <VerticalStackLayout mauiGestures:Gesture.SwipeLeftCommand="{Binding TextSwipedCommand}" 
                              IsEnabled="True" BackgroundColor="Yellow">
-            <Label Text="4.Swipe left on this text to open an url" InputTransparent="True" />
+            <Label Text="4.Swipe left on this text" InputTransparent="True" />
         </VerticalStackLayout>
 
         <VerticalStackLayout>
