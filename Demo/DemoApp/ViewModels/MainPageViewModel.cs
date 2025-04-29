@@ -5,9 +5,8 @@ using Point = Microsoft.Maui.Graphics.Point;
 
 namespace DemoApp.ViewModels;
 
-public class MainPageViewModel : BindableObject
+public class MainPageViewModel(INavigation navigation) : BindableObject
 {
-    private readonly INavigation navigation;
     private Point pan, pinch;
     private GestureStatus? panStatus;
     private double rotation, scale;
@@ -18,12 +17,6 @@ public class MainPageViewModel : BindableObject
     public double Rotation { get => rotation; set { rotation = value; OnPropertyChanged(); } }
     public double Scale { get => scale; set { scale = value; OnPropertyChanged(); } }
 
-    public MainPageViewModel(INavigation navigation)
-    {
-        this.navigation = navigation;
-    }
-
-        
     public ICommand PanPointCommand => new Command<PanEventArgs>(args =>
     {
         var point = args.Point;
@@ -40,7 +33,8 @@ public class MainPageViewModel : BindableObject
 
     public ICommand TextSwipedCommand => new Command(async () =>
     {
-        await UserInteraction.Alert("Swipe gesture detected", "Item swiped");
+        var message = "Swipe gesture detected";
+        await CommunityToolkit.Maui.Alerts.Toast.Make(message).Show();
 
         // await navigation.PushAsync(new ContentPage {
         //     Title = "Web",
@@ -49,10 +43,11 @@ public class MainPageViewModel : BindableObject
         //         Children = { new WebView { Source = new UrlWebViewSource { Url = "https://vapolia.fr" }, HorizontalOptions = LayoutOptions.Fill, VerticalOptions = LayoutOptions.Fill} }}});
     });
     
-    public ICommand OpenVapoliaCommand => new Command(async () =>
+    public ICommand OnTapCommand => new Command(async () =>
     {
-        await UserInteraction.Alert("Open Vapolia command received", "Item tapped");
-
+        var message = "Tap command received";
+        await CommunityToolkit.Maui.Alerts.Toast.Make(message).Show();
+        
         // await navigation.PushAsync(new ContentPage {
         //     Title = "Web",
         //     Content = new Grid {
@@ -60,14 +55,20 @@ public class MainPageViewModel : BindableObject
         //         Children = { new WebView { Source = new UrlWebViewSource { Url = "https://vapolia.fr" }, HorizontalOptions = LayoutOptions.Fill, VerticalOptions = LayoutOptions.Fill} }}});
     });
 
+    public ICommand OpenDoubleTapPointCommand => new Command<PointEventArgs>(args => _ = OpenPointCommand(args, "Double tap"));
+    public ICommand OpenLongPressPointCommand => new Command<PointEventArgs>(args => _ = OpenPointCommand(args, "Long press"));
+    
         
-    public ICommand OpenVapoliaPointCommand => new Command<PointEventArgs>(async args =>
+    async Task OpenPointCommand(PointEventArgs args, string title)
     {
         Pan = args.Point;
         var absXy = args.GetCoordinates();
-        
-        await UserInteraction.Alert($"Open Vapolia Point command received at position ({args.Point.X:0.0},{args.Point.Y:0.0}) relative to the element, and ({absXy.X:0.0},{absXy.Y:0.0}) relative to the root view", "Item tapped");
+        var message = $"{title} received at position ({args.Point.X:0.0},{args.Point.Y:0.0}) relative to the element, and ({absXy.X:0.0},{absXy.Y:0.0}) relative to the root view";
 
+        await CommunityToolkit.Maui.Alerts.Toast.Make(message).Show();
+        
+#if !WINDOWS
         await UserInteraction.Menu(default, position: args.GetAbsoluteBoundsF(), cancelButton: "Cancel", otherButtons: ["Do something"]);
-    });
+#endif
+    }
 }

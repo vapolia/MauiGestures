@@ -1,4 +1,5 @@
-﻿using MauiGestures;
+﻿using CommunityToolkit.Maui;
+using MauiGestures;
 using Microsoft.Extensions.Logging;
 using Vapolia.Svgs;
 
@@ -16,7 +17,11 @@ namespace DemoApp
                        fonts.AddFont("OpenSans-SemiBold.ttf", "OpenSansSemiBold");
                    })
                    .UseAdvancedGestures()
-                   .UseEasySvg();
+                   .UseEasySvg()
+                   .UseMauiCommunityToolkit(o =>
+                   {
+                       o.SetShouldEnableSnackbarOnWindows(true);
+                   });
 
 #if DEBUG
             builder.Logging.AddDebug();
