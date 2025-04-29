@@ -14,7 +14,8 @@
             return new Window(new MainPage())
             {
                 Title = "DemoApp",
-                Height = 720
+                Height = 800,
+                Width = 600
             };
         }
     }

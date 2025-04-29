@@ -2,6 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
         <OutputType>Exe</OutputType>
 
         <!-- .NET MAUI -->
@@ -14,6 +15,7 @@
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>DemoApp</RootNamespace>
+        <WindowsPackageType>None</WindowsPackageType>
 
         <!-- Display name -->
         <ApplicationTitle>Gestures Demo</ApplicationTitle>
@@ -28,9 +30,8 @@
         <!-- Target Platform Options -->
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">28.0</SupportedOSPlatformVersion>
-    </PropertyGroup>
-    <PropertyGroup>
-      <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -53,9 +54,10 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.2" Condition="'$(Configuration)' == 'Debug'" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.40" />
-        <PackageReference Include="Vapolia.Svg" Version="1.0.5" />
+        <PackageReference Include="CommunityToolkit.Maui" Version="11.2.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.4" Condition="'$(Configuration)' == 'Debug'" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.60" />
+        <PackageReference Include="Vapolia.Svg" Version="1.0.7" />
         <PackageReference Include="Vapolia.UserInteraction" Version="4.0.2" />
     </ItemGroup>
 

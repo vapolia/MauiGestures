@@ -20,20 +20,20 @@
        <VerticalStackLayout Spacing="20" Padding="20">
 
         <!--  ios: gestures does not work directly on a forms label  -->
-        <VerticalStackLayout mauiGestures:Gesture.TapCommand="{Binding OpenVapoliaCommand}" IsEnabled="True">
-            <Label Text="1.Tap this text to open an url" />
+        <VerticalStackLayout mauiGestures:Gesture.TapCommand="{Binding OnTapCommand}" IsEnabled="True">
+            <Label Text="1.Tap this text" />
         </VerticalStackLayout>
 
-        <VerticalStackLayout mauiGestures:Gesture.DoubleTapPointCommand="{Binding OpenVapoliaPointCommand}" IsEnabled="True">
+        <VerticalStackLayout mauiGestures:Gesture.DoubleTapPointCommand="{Binding OpenDoubleTapPointCommand}" IsEnabled="True">
             <Label Text="2.Double tap this text to open an url" />
         </VerticalStackLayout>
 
-        <VerticalStackLayout mauiGestures:Gesture.LongPressPointCommand="{Binding OpenVapoliaPointCommand}" IsEnabled="True">
+        <VerticalStackLayout mauiGestures:Gesture.LongPressPointCommand="{Binding OpenLongPressPointCommand}" IsEnabled="True">
             <Label Text="3.Long press this text to open an url" />
         </VerticalStackLayout>
 
         <VerticalStackLayout mauiGestures:Gesture.SwipeLeftCommand="{Binding TextSwipedCommand}" 
-                             IsEnabled="True" BackgroundColor="Orange">
+                             IsEnabled="True" BackgroundColor="Yellow">
             <Label Text="4.Swipe left on this text to open an url" InputTransparent="True" />
         </VerticalStackLayout>
 

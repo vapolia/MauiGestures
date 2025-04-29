@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{8612F0AD-CE5D-4B97-86EE-5397D6ABDE74}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\main.yaml = .github\workflows\main.yaml
+		.gitignore = .gitignore
 	EndProjectSection
 EndProject
 Global
