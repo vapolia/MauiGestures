@@ -44,16 +44,22 @@ public static class Gesture
     /// </summary>
     public static readonly BindableProperty PanPointCommandProperty = BindableProperty.CreateAttached("PanPointCommand", typeof(ICommand), typeof(Gesture), null, propertyChanged: CommandChanged);
     public static readonly BindableProperty IsPanImmediateProperty = BindableProperty.CreateAttached("IsPanImmediate", typeof(bool), typeof(Gesture), false, propertyChanged: CommandChanged);
-   
+
+#if ANDROID
     /// <summary>
     /// Android only: min distance to trigger a swipe
     /// </summary>
     public static readonly BindableProperty SwipeThresholdProperty = BindableProperty.CreateAttached("SwipeThreshold", typeof(int), typeof(Gesture), 40, propertyChanged: CommandChanged);
+#endif
+
     public static readonly BindableProperty CommandParameterProperty = BindableProperty.CreateAttached("CommandParameter", typeof(object), typeof(Gesture), null);
 
+#if WINDOWS
     //Windows only
-    public static readonly BindableProperty ReturnAllPointsOnWindowsProperty = BindableProperty.CreateAttached("ReturnAllPointsOnWindows", typeof(bool), typeof(Gesture), false, propertyChanged: CommandChanged);
-    
+    public static readonly BindableProperty ProcessIntermediatePointsProperty = BindableProperty.CreateAttached("ProcessIntermediatePoints", typeof(bool), typeof(Gesture), false, propertyChanged: CommandChanged);
+    public static readonly BindableProperty CrossSlideHorizontallyProperty = BindableProperty.CreateAttached("CrossSlideHorizontally", typeof(bool), typeof(Gesture), true, propertyChanged: CommandChanged);
+#endif
+
     public static ICommand GetLongPressCommand(BindableObject view) => (ICommand)view.GetValue(LongPressCommandProperty);
     public static ICommand GetTapCommand(BindableObject view) => (ICommand)view.GetValue(TapCommandProperty);
     public static ICommand GetDoubleTapCommand(BindableObject view) => (ICommand)view.GetValue(DoubleTapCommandProperty);
@@ -82,9 +88,11 @@ public static class Gesture
     /// Take a (Point,GestureStatus) parameter (it is a tuple) 
     /// </summary>
     public static ICommand GetPanPointCommand(BindableObject view) => (ICommand)view.GetValue(PanPointCommandProperty);
-    
-    
-    public static bool GetReturnAllPointsOnWindows(BindableObject view) => (bool)view.GetValue(ReturnAllPointsOnWindowsProperty);
+
+#if WINDOWS
+    public static bool GetProcessIntermediatePoints(BindableObject view) => (bool)view.GetValue(ProcessIntermediatePointsProperty);
+    public static bool GetCrossSlideHorizontally(BindableObject view) => (bool)view.GetValue(CrossSlideHorizontallyProperty);
+#endif
 
     public static void SetLongPressCommand(BindableObject view, ICommand value) => view.SetValue(LongPressCommandProperty, value);
     public static void SetTapCommand(BindableObject view, ICommand value) => view.SetValue(TapCommandProperty, value);
@@ -114,8 +122,10 @@ public static class Gesture
     /// </summary>
     public static void SetPanPointCommand(BindableObject view, ICommand value) => view.SetValue(PanPointCommandProperty, value);
 
+#if ANDROID
     public static int GetSwipeThreshold(BindableObject view) => (int)view.GetValue(SwipeThresholdProperty);
     public static void SetSwipeThreshold(BindableObject view, int value) => view.SetValue(SwipeThresholdProperty, value);
+#endif
 
     public static object GetCommandParameter(BindableObject view) => view.GetValue(CommandParameterProperty);
     public static void SetCommandParameter(BindableObject view, object value) => view.SetValue(CommandParameterProperty, value);

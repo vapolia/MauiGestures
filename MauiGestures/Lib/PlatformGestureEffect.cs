@@ -33,7 +33,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
     private ICommand? pinchCommand;
 
 #if WINDOWS
-    private bool returnAllPointsOnWindows;
+    private bool processIntermediatePoints;
 #endif
 
     protected override void OnElementPropertyChanged(PropertyChangedEventArgs args)
@@ -62,7 +62,8 @@ internal partial class PlatformGestureEffect : PlatformEffect
             commandParameter = Gesture.GetCommandParameter(element);
 
 #if WINDOWS
-            returnAllPointsOnWindows = Gesture.GetReturnAllPointsOnWindows(element);
+            processIntermediatePoints = Gesture.GetProcessIntermediatePoints(element);
+            detector.CrossSlideHorizontally = Gesture.GetCrossSlideHorizontally(element);
 #endif
 
 #if IOS || MACCATALYST
