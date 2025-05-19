@@ -62,8 +62,8 @@ internal partial class PlatformGestureEffect : PlatformEffect
             commandParameter = Gesture.GetCommandParameter(element);
 
 #if WINDOWS
-            processIntermediatePoints = Gesture.GetProcessIntermediatePoints(element);
-            detector.CrossSlideHorizontally = Gesture.GetCrossSlideHorizontally(element);
+            processIntermediatePoints = Gesture.GetWindowsProcessIntermediatePoints(element);
+            detector.CrossSlideHorizontally = Gesture.GetWindowsCrossSlideHorizontally(element);
 #endif
 
 #if IOS || MACCATALYST
