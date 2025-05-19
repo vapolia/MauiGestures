@@ -238,7 +238,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
 
     private void ControlOnPointerMoved(object sender, PointerRoutedEventArgs args)
     {
-        var points = returnAllPointsOnWindows ? args.GetIntermediatePoints(Control ?? Container) : [args.GetCurrentPoint(Control ?? Container)];
+        var points = processIntermediatePoints ? args.GetIntermediatePoints(Control ?? Container) : [args.GetCurrentPoint(Control ?? Container)];
 
         if (_currentPointer1 == null || points[0].Timestamp > _currentPointer1.Timestamp)
         {
