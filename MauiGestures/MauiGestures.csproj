@@ -29,7 +29,7 @@
         <None Include="../LICENSE" Pack="true" PackagePath="" />
         <None Include="../README.md" Pack="true" PackagePath="" />
         <None Include="../icon.png" Pack="true" PackagePath="" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.60" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.71" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
     </ItemGroup>
 
