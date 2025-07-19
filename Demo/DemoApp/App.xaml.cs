@@ -1,22 +1,21 @@
-﻿namespace DemoApp
+﻿namespace DemoApp;
+
+public partial class App : Application
 {
-    public partial class App : Application
+    public App()
     {
-        public App()
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            UserAppTheme = PlatformAppTheme;
-        }
+        UserAppTheme = PlatformAppTheme;
+    }
 
-        protected override Window CreateWindow(IActivationState? activationState)
+    protected override Window CreateWindow(IActivationState? activationState)
+    {
+        return new Window(new MainPage())
         {
-            return new Window(new MainPage())
-            {
-                Title = "DemoApp",
-                Height = 800,
-                Width = 600
-            };
-        }
+            Title = "DemoApp",
+            Height = 800,
+            Width = 600
+        };
     }
 }

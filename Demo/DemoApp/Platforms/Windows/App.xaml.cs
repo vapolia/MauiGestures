@@ -16,6 +16,12 @@ public partial class App : MauiWinUIApplication
     /// </summary>
     public App()
     {
+        UnhandledException += (sender, e) =>
+        {
+            if (global::System.Diagnostics.Debugger.IsAttached) 
+                global::System.Diagnostics.Debugger.Break();
+        };
+        
         this.InitializeComponent();
     }
 

@@ -15,7 +15,7 @@
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>DemoApp</RootNamespace>
-        <WindowsPackageType>MSIX</WindowsPackageType>
+        <WindowsPackageType>None</WindowsPackageType>
 
         <!-- Display name -->
         <ApplicationTitle>Gestures Demo</ApplicationTitle>
@@ -30,8 +30,8 @@
         <!-- Target Platform Options -->
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">28.0</SupportedOSPlatformVersion>
-        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
-        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.19041.0</TargetPlatformMinVersion>
     </PropertyGroup>
 
     <ItemGroup>
@@ -55,6 +55,7 @@
 
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.Maui" Version="12.1.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.7" Condition="'$(Configuration)' == 'Debug'" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.7" Condition="'$(Configuration)' == 'Debug'" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.90" />
         <PackageReference Include="Vapolia.Svg" Version="1.0.7" />
