@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="FilenameBasedMultiTargeting.props" />
 
     <PropertyGroup>
 	    <TargetFrameworks>net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
@@ -18,25 +19,15 @@
 <!--        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>-->
     </PropertyGroup>
 
-    <!-- Unable to put that folder in the Platforms folder and make it work, whatever combination is used
-         So created the Platform folder instead -->
-    <ItemGroup Condition=" $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'ios' AND $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'maccatalyst' ">
-        <Compile Remove="**\MaciOS\**\*.cs" />
-        <None Include="**\MaciOS\**\*.cs" Exclude="$(DefaultItemExcludes);$(DefaultExcludesInProjectFolder)" />
-    </ItemGroup>
 
     <ItemGroup>
-        <None Include="../LICENSE" Pack="true" PackagePath="" />
+        <None Include="../LICENSE.md" Pack="true" PackagePath="" />
         <None Include="../README.md" Pack="true" PackagePath="" />
         <None Include="../icon.png" Pack="true" PackagePath="" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.90" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Platform\" />
-    </ItemGroup>
-    
     <!--  nuget configurable properties -->
     <PropertyGroup>
         <Version>0.0.0-pre1</Version>

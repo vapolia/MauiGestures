@@ -28,13 +28,7 @@ Or in code:
 
 # Quick start
 Add the above nuget package to your Maui project   
-then add this line to your maui app builder:
-
-```c#
-using MauiGestures;
-...
-builder.UseAdvancedGestures();
-``` 
+Gestures are now automatically enabled when you use gesture properties - no additional setup required!
 
 The view on which the gesture is applied should have the property `InputTransparent="False"` which activates user interaction on it. If the view is still not receiving tap events, try adding a background color. That forces Maui to wrap some controls in an invisible container.
 
