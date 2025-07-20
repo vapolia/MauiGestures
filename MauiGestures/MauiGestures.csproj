@@ -56,6 +56,7 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageProjectUrl>https://vapolia.eu</PackageProjectUrl>
         <PackageReleaseNotes>
+            2.0.0: Replaced effects by behaviors
             1.1.1: Windows contributions (whodges) + nuget updates
             1.1.0: Upgraded to net9 
             1.0.4: Remove IsPanImmediate from android gestures, as it was preventing the reception of the GestureStatus.Started event

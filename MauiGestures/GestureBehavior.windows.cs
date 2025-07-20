@@ -4,27 +4,29 @@ using System.Runtime.InteropServices;
 using System.Windows.Input;
 using Microsoft.Maui.Controls.Platform;
 using Microsoft.UI.Input;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Input;
 using GestureRecognizer = Microsoft.UI.Input.GestureRecognizer;
 
 namespace MauiGestures;
 
-internal partial class PlatformGestureEffect : PlatformEffect
+internal partial class GestureBehavior
 {
-    readonly GestureRecognizer detector;
+    GestureRecognizer? detector;
+
     Windows.Foundation.Point swipeStartPosition;
     //int swipeThresholdInPoints = 40;
 
-    PointerPoint? _currentPointer1 = null;      // First touch point
-    PointerPoint? _currentPointer2 = null;      // Second touch point
-    bool pinching = false;
-    bool panning = false;
+    PointerPoint? currentPointer1;      // First touch point
+    PointerPoint? currentPointer2;      // Second touch point
+    bool pinching;
+    bool panning;
     (Point Point1, Point Point2) startingPinchPoints;
     (Point Point1, Point Point2) currentPinchPoints;
 
-    public PlatformGestureEffect()
+    GestureRecognizer CreateGestures(View view)
     {
-        detector = new()
+        var recognizer = new GestureRecognizer
         {
             GestureSettings = 
                 GestureSettings.Tap
@@ -58,43 +60,43 @@ internal partial class PlatformGestureEffect : PlatformEffect
         //    Trace.WriteLine("dragging");
         //};
 
-        detector.Tapped += (sender, args) =>
+        recognizer.Tapped += (sender, args) =>
         {
             if (args.TapCount == 1)
             {
                 TriggerCommand(tapCommand, commandParameter);
-                var pointArgs = new PointEventArgs(new Point(args.Position.X, args.Position.Y), Element, Element.BindingContext);
+                var pointArgs = new PointEventArgs(new Point(args.Position.X, args.Position.Y), view, view.BindingContext);
                 TriggerCommand(tapPointCommand, pointArgs);
             }
             else if (args.TapCount == 2) 
             {
                 TriggerCommand(doubleTapCommand, commandParameter);
-                var pointArgs = new PointEventArgs(new Point(args.Position.X, args.Position.Y), Element, Element.BindingContext);
+                var pointArgs = new PointEventArgs(new Point(args.Position.X, args.Position.Y), view, view.BindingContext);
                 TriggerCommand(doubleTapPointCommand, pointArgs);
             }
         };
 
-        detector.Holding += (sender, args) =>
+        recognizer.Holding += (sender, args) =>
         {
             if (args.HoldingState == HoldingState.Started) 
             {
                 TriggerCommand(longPressCommand, commandParameter);
-                var pointArgs = new PointEventArgs(new Point(args.Position.X, args.Position.Y), Element, Element.BindingContext);
+                var pointArgs = new PointEventArgs(new Point(args.Position.X, args.Position.Y), view, view.BindingContext);
                 TriggerCommand(longPressPointCommand, pointArgs);
             }
         };
 
-        detector.ManipulationStarted += (sender, args) =>
+        recognizer.ManipulationStarted += (sender, args) =>
         {
             // Need to wait till ManipulationUpdated to see if we're pinching or panning before we commit to a gesture
         };
 
-        detector.ManipulationUpdated += (sender, args) =>
+        recognizer.ManipulationUpdated += (sender, args) =>
         {
-            if (!pinching && _currentPointer1 != null &&  _currentPointer2 != null)
+            if (!pinching && currentPointer1 != null &&  currentPointer2 != null)
             {
-                startingPinchPoints = (new Point(_currentPointer1.Position.X, _currentPointer1.Position.Y),
-                                       new Point(_currentPointer2.Position.X, _currentPointer2.Position.Y));
+                startingPinchPoints = (new Point(currentPointer1.Position.X, currentPointer1.Position.Y),
+                                       new Point(currentPointer2.Position.X, currentPointer2.Position.Y));
 
                 var parameters = new PinchEventArgs(GestureStatus.Started, startingPinchPoints, startingPinchPoints);
                 TriggerCommand(pinchCommand, parameters);
@@ -103,10 +105,10 @@ internal partial class PlatformGestureEffect : PlatformEffect
             }
             else if (pinching)
             {
-                if (_currentPointer1 != null &&  _currentPointer2 != null)
+                if (currentPointer1 != null &&  currentPointer2 != null)
                 {
-                    currentPinchPoints = (new Point(_currentPointer1.Position.X, _currentPointer1.Position.Y), 
-                                          new Point(_currentPointer2.Position.X, _currentPointer2.Position.Y));
+                    currentPinchPoints = (new Point(currentPointer1.Position.X, currentPointer1.Position.Y), 
+                                          new Point(currentPointer2.Position.X, currentPointer2.Position.Y));
 
                     var parameters = new PinchEventArgs(GestureStatus.Running, currentPinchPoints, startingPinchPoints);
                     TriggerCommand(pinchCommand, parameters);
@@ -122,7 +124,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
             }
         };
 
-        detector.ManipulationCompleted += (sender, args) =>
+        recognizer.ManipulationCompleted += (sender, args) =>
         {
             if (pinching)
             {
@@ -161,7 +163,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
         //    }
         //};
 
-        detector.CrossSliding += (sender, args) =>
+        recognizer.CrossSliding += (sender, args) =>
         {
             switch (args.CrossSlidingState)
             {
@@ -187,6 +189,8 @@ internal partial class PlatformGestureEffect : PlatformEffect
                     break;
             }
         };
+
+        return recognizer;
     }
 
     private void TriggerCommand(ICommand? command, object? parameter)
@@ -195,31 +199,35 @@ internal partial class PlatformGestureEffect : PlatformEffect
             command.Execute(parameter);
     }
 
-    protected override partial void OnAttached()
+    protected override void OnAttachedTo(View view, Microsoft.UI.Xaml.FrameworkElement platformView)
     {
-        var control = Control ?? Container;
-
-        control.PointerPressed += ControlOnPointerPressed;
-        control.PointerMoved += ControlOnPointerMoved;
-        control.PointerReleased += ControlOnPointerReleased;
-        control.PointerCanceled += ControlOnPointerCanceled;
-        control.PointerCaptureLost += ControlOnPointerCanceled;
+        detector = CreateGestures(view);
+        
+        platformView.PointerPressed += ControlOnPointerPressed;
+        platformView.PointerMoved += ControlOnPointerMoved;
+        platformView.PointerReleased += ControlOnPointerReleased;
+        platformView.PointerCanceled += ControlOnPointerCanceled;
+        platformView.PointerCaptureLost += ControlOnPointerCanceled;
         //control.ManipulationInertiaStarting += ControlOnManipulationInertiaStarting;
         //control.PointerExited += ControlOnPointerCanceled;
 
-        OnElementPropertyChanged(new PropertyChangedEventArgs(String.Empty));
+        OnAttached(view);
+        OnViewPropertyChanged(view, new PropertyChangedEventArgs(String.Empty));
     }
 
-    protected override partial void OnDetached()
+    protected override void OnDetachedFrom(View view, Microsoft.UI.Xaml.FrameworkElement platformView)
     {
-        var control = Control ?? Container;
-        control.PointerPressed -= ControlOnPointerPressed;
-        control.PointerMoved -= ControlOnPointerMoved;
-        control.PointerReleased -= ControlOnPointerReleased;
-        control.PointerCanceled -= ControlOnPointerCanceled;
-        control.PointerCaptureLost -= ControlOnPointerCanceled;
+        OnDetach(view);
+        
+        platformView.PointerPressed -= ControlOnPointerPressed;
+        platformView.PointerMoved -= ControlOnPointerMoved;
+        platformView.PointerReleased -= ControlOnPointerReleased;
+        platformView.PointerCanceled -= ControlOnPointerCanceled;
+        platformView.PointerCaptureLost -= ControlOnPointerCanceled;
         //control.ManipulationInertiaStarting -= ControlOnManipulationInertiaStarting;
         //control.PointerExited -= ControlOnPointerCanceled;
+
+        detector = null;
     }
 
     //private void ControlOnManipulationInertiaStarting(object sender, ManipulationInertiaStartingRoutedEventArgs e)
@@ -230,27 +238,29 @@ internal partial class PlatformGestureEffect : PlatformEffect
 
     private void ControlOnPointerPressed(object sender, PointerRoutedEventArgs args)
     {
-        var point = args.GetCurrentPoint(Control ?? Container);
+        var platformView = (UIElement)sender;
+        var point = args.GetCurrentPoint(platformView);
         detector.ProcessDownEvent(point);
-        (Control ?? Container).CapturePointer(args.Pointer);
+        platformView.CapturePointer(args.Pointer);
         args.Handled = true;
     }
 
     private void ControlOnPointerMoved(object sender, PointerRoutedEventArgs args)
     {
-        var points = processIntermediatePoints ? args.GetIntermediatePoints(Control ?? Container) : [args.GetCurrentPoint(Control ?? Container)];
+        var platformView = (UIElement)sender;
+        var points = processIntermediatePoints ? args.GetIntermediatePoints(platformView) : [args.GetCurrentPoint(platformView)];
 
-        if (_currentPointer1 == null || points[0].Timestamp > _currentPointer1.Timestamp)
+        if (currentPointer1 == null || points[0].Timestamp > currentPointer1.Timestamp)
         {
             // Set the first pointer if it either hasn't been set or is out-of-date (old timestamp)
-            _currentPointer1 = points[0];
-            _currentPointer2 = null;
+            currentPointer1 = points[0];
+            currentPointer2 = null;
         }
         else
         {
             // If the new pointer's timestamp matches the first pointer's, then we know this is a second pointer
-            if (points[0].Timestamp == _currentPointer1.Timestamp)
-                _currentPointer2 = points[0];
+            if (points[0].Timestamp == currentPointer1.Timestamp)
+                currentPointer2 = points[0];
         }
 
         try
@@ -284,16 +294,18 @@ internal partial class PlatformGestureEffect : PlatformEffect
 
     private void ControlOnPointerReleased(object sender, PointerRoutedEventArgs args)
     {
-        var point = args.GetCurrentPoint(Control ?? Container);
+        var platformView = (UIElement)sender;
+        var point = args.GetCurrentPoint(platformView);
         detector.ProcessUpEvent(point);
-        (Control ?? Container).ReleasePointerCapture(args.Pointer);
+        platformView.ReleasePointerCapture(args.Pointer);
         args.Handled = true;
     }
 
     private void ControlOnPointerCanceled(object sender, PointerRoutedEventArgs args)
     {
+        var platformView = (UIElement)sender;
         detector.CompleteGesture();
-        (Control ?? Container).ReleasePointerCapture(args.Pointer);
+        platformView.ReleasePointerCapture(args.Pointer);
         args.Handled = true;
     }
 }

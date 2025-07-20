@@ -36,7 +36,6 @@ public static partial class MauiProgram
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-SemiBold.ttf", "OpenSansSemiBold");
             })
-            .UseAdvancedGestures()
             .UseEasySvg()
             .UseMauiCommunityToolkit(o =>
             {

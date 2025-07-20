@@ -53,7 +53,12 @@ public static class ElementExtensions
         var rect = nativeView.Superview.ConvertPointToView(nativeView.Frame.Location, null);
         return new (rect.X, rect.Y);
 #elif WINDOWS
-        return Point.Zero;
+        if (element.Handler?.PlatformView is not Microsoft.UI.Xaml.FrameworkElement nativeView)
+            return Point.Zero;
+
+        var transform = nativeView.TransformToVisual(null!);
+        var position = transform.TransformPoint(new global::Windows.Foundation.Point(0, 0));
+        return new (position.X, position.Y);
 #else
         throw new NotSupportedException("Not supported on this platform");
 #endif

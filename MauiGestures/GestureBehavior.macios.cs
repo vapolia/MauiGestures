@@ -1,54 +1,54 @@
 using System.ComponentModel;
 using System.Windows.Input;
-using Microsoft.Maui.Controls.Platform;
 using Microsoft.Maui.Platform;
 using UIKit;
 
 namespace MauiGestures;
 
-internal partial class PlatformGestureEffect : PlatformEffect
+internal partial class GestureBehavior
 {
-    private readonly UIImmediatePanGestureRecognizer panDetector;
-    private readonly UIImmediatePinchGestureRecognizer pinchDetector;
-    private readonly List<UIGestureRecognizer> recognizers;
+    private List<UIGestureRecognizer>? recognizers;
+    private UIImmediatePanGestureRecognizer? panDetector;
+    private UIImmediatePinchGestureRecognizer? pinchDetector;
+    
     private (Point Origin0, Point Origin1) pinchOrigin, lastPinch;
 
-    public PlatformGestureEffect()
+    private List<UIGestureRecognizer> CreateGestures(View view, UIView platformView)
     {
         //if (!allSubviews)
         //    tapDetector.ShouldReceiveTouch = (s, args) => args.View != null && (args.View == view || view.Subviews.Any(v => v == args.View));
         //else
         //    tapDetector.ShouldReceiveTouch = (s, args) => true;
 
-        var tapDetector = CreateTapRecognizer(() => (tapCommand,tapPointCommand));
-        var doubleTapDetector = CreateTapRecognizer(() => (doubleTapCommand, doubleTapPointCommand));
+        var tapDetector = CreateTapRecognizer(view, platformView, () => (tapCommand,tapPointCommand));
+        var doubleTapDetector = CreateTapRecognizer(view, platformView, () => (doubleTapCommand, doubleTapPointCommand));
         doubleTapDetector.NumberOfTapsRequired = 2;
-        var longPressDetector = CreateLongPressRecognizer(() => (longPressCommand, longPressPointCommand));
+        var longPressDetector = CreateLongPressRecognizer(view, platformView, () => (longPressCommand, longPressPointCommand));
 
-        panDetector = CreatePanRecognizer(() => (panCommand, panPointCommand));
-        pinchDetector = CreatePinchRecognizer(() => pinchCommand);
+        panDetector = CreatePanRecognizer(platformView, () => (panCommand, panPointCommand));
+        pinchDetector = CreatePinchRecognizer(platformView, () => pinchCommand);
 
         var swipeLeftDetector = CreateSwipeRecognizer(() => swipeLeftCommand, UISwipeGestureRecognizerDirection.Left);
         var swipeRightDetector = CreateSwipeRecognizer(() => swipeRightCommand, UISwipeGestureRecognizerDirection.Right);
         var swipeUpDetector = CreateSwipeRecognizer(() => swipeTopCommand, UISwipeGestureRecognizerDirection.Up);
         var swipeDownDetector = CreateSwipeRecognizer(() => swipeBottomCommand, UISwipeGestureRecognizerDirection.Down);
 
-        recognizers =
+        return 
         [
             tapDetector, doubleTapDetector, longPressDetector, panDetector, pinchDetector,
             swipeLeftDetector, swipeRightDetector, swipeUpDetector, swipeDownDetector
         ];
     }
 
-    private PointEventArgs GetPointArgs(UIGestureRecognizer recognizer)
+    private PointEventArgs GetPointArgs(View view, UIView platformView, UIGestureRecognizer recognizer)
     {
-        var control = Control ?? Container;
+        var control = platformView;
         var point = recognizer.LocationInView(control).ToPoint();
-        var args = new PointEventArgs(point, Element, Element.BindingContext);
+        var args = new PointEventArgs(point, view, view.BindingContext);
         return args;
     }
 
-    private UITapGestureRecognizer CreateTapRecognizer(Func<(ICommand? Command,ICommand? PointCommand)> getCommand)
+    private UITapGestureRecognizer CreateTapRecognizer(View view, UIView platformView, Func<(ICommand? Command,ICommand? PointCommand)> getCommand)
     {
         return new (recognizer =>
         {
@@ -58,7 +58,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
                 if (command?.CanExecute(commandParameter) == true)
                     command.Execute(commandParameter);
                 
-                var args = GetPointArgs(recognizer);
+                var args = GetPointArgs(view, platformView, recognizer);
                 if(pointCommand?.CanExecute(args) == true)
                     pointCommand.Execute(args);
             }
@@ -70,7 +70,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
         };
     }
 
-    private UILongPressGestureRecognizer CreateLongPressRecognizer(Func<(ICommand? Command, ICommand? PointCommand)> getCommand)
+    private UILongPressGestureRecognizer CreateLongPressRecognizer(View view, UIView platformView, Func<(ICommand? Command, ICommand? PointCommand)> getCommand)
     {
         return new (recognizer =>
         {
@@ -82,7 +82,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
                     if (command?.CanExecute(commandParameter) == true)
                         command.Execute(commandParameter);
 
-                    var args = GetPointArgs(recognizer);
+                    var args = GetPointArgs(view, platformView, recognizer);
                     if (pointCommand?.CanExecute(args) == true)
                         pointCommand.Execute(args);
                 }
@@ -111,21 +111,18 @@ internal partial class PlatformGestureEffect : PlatformEffect
         };
     }
         
-    private UIImmediatePinchGestureRecognizer CreatePinchRecognizer(Func<ICommand?> getCommand)
+    private UIImmediatePinchGestureRecognizer CreatePinchRecognizer(UIView platformView, Func<ICommand?> getCommand)
     {
         return new (recognizer =>
         {
             var command = getCommand();
             if (command != null)
             {
-                var control = Control ?? Container;
+                var control = platformView;
 
-                if (recognizer.NumberOfTouches < 2)
-                {
-                    if(recognizer.State == UIGestureRecognizerState.Changed)
-                        return;
-                }
-                    
+                if (recognizer is { NumberOfTouches: < 2, State: UIGestureRecognizerState.Changed }) 
+                    return;
+
                 if(recognizer.State == UIGestureRecognizerState.Began)
                     lastPinch = (Point.Zero, Point.Zero);
 
@@ -149,7 +146,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
                     UIGestureRecognizerState.Began => GestureStatus.Started,
                     UIGestureRecognizerState.Changed => GestureStatus.Running,
                     UIGestureRecognizerState.Ended => GestureStatus.Completed,
-                    UIGestureRecognizerState.Cancelled => GestureStatus.Canceled,
+                    //UIGestureRecognizerState.Cancelled => GestureStatus.Canceled,
                     _ => GestureStatus.Canceled,
                 };
 
@@ -164,7 +161,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
         };
     }
 
-    private UIImmediatePanGestureRecognizer CreatePanRecognizer(Func<(ICommand? Command, ICommand? PointCommand)> getCommand)
+    private UIImmediatePanGestureRecognizer CreatePanRecognizer(UIView platformView, Func<(ICommand? Command, ICommand? PointCommand)> getCommand)
     {
         return new UIImmediatePanGestureRecognizer(recognizer =>
         {
@@ -174,7 +171,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
                 if (recognizer.NumberOfTouches > 1 && recognizer.State != UIGestureRecognizerState.Cancelled && recognizer.State != UIGestureRecognizerState.Ended)
                     return;
                     
-                var control = Control ?? Container;
+                var control = platformView;
                 var point = recognizer.LocationInView(control).ToPoint();
                     
                 if (command?.CanExecute(commandParameter) == true)
@@ -189,7 +186,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
                         UIGestureRecognizerState.Began => GestureStatus.Started,
                         UIGestureRecognizerState.Changed => GestureStatus.Running,
                         UIGestureRecognizerState.Ended => GestureStatus.Completed,
-                        UIGestureRecognizerState.Cancelled => GestureStatus.Canceled,
+                        //UIGestureRecognizerState.Cancelled => GestureStatus.Canceled,
                         _ => GestureStatus.Canceled,
                     };
                         
@@ -215,7 +212,7 @@ internal partial class PlatformGestureEffect : PlatformEffect
                             
                 if(pointCommand != null)
                 {
-                    var control = Control ?? Container;
+                    var control = platformView;
                     var point = recognizer.LocationInView(control).ToPoint();
 
                     var parameter = new PanEventArgs(GestureStatus.Started, point);
@@ -230,26 +227,31 @@ internal partial class PlatformGestureEffect : PlatformEffect
         };
     }
 
-    protected override partial void OnAttached()
+    protected override void OnAttachedTo(View view, UIView platformView)
     {
-        var control = Control ?? Container;
-
+        recognizers = CreateGestures(view, platformView);
         foreach (var recognizer in recognizers)
         {
-            control.AddGestureRecognizer(recognizer);
+            platformView.AddGestureRecognizer(recognizer);
             recognizer.Enabled = true;
         }
 
-        OnElementPropertyChanged(new PropertyChangedEventArgs(String.Empty));
+        OnAttached(view);
+        OnViewPropertyChanged(view, new PropertyChangedEventArgs(String.Empty));
     }
 
-    protected override partial void OnDetached()
+    protected override void OnDetachedFrom(View view, UIView platformView)
     {
-        var control = Control ?? Container;
-        foreach (var recognizer in recognizers)
+        OnDetach(view);
+
+        foreach (var recognizer in recognizers!)
         {
             recognizer.Enabled = false;
-            control.RemoveGestureRecognizer(recognizer);
+            platformView.RemoveGestureRecognizer(recognizer);
         }
+
+        recognizers = null;
+        panDetector = null;
+        pinchDetector = null;
     }
 }

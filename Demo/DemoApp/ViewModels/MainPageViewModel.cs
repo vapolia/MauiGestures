@@ -10,6 +10,8 @@ public class MainPageViewModel(INavigation navigation) : BindableObject
     private Point pan, pinch;
     private GestureStatus? panStatus;
     private double rotation, scale;
+    
+    public string Message { get; set; }
 
     public Point Pan { get => pan; set { pan = value; OnPropertyChanged(); } }
     public GestureStatus? PanStatus { get => panStatus; set { panStatus = value; OnPropertyChanged(); } }
@@ -31,10 +33,20 @@ public class MainPageViewModel(INavigation navigation) : BindableObject
         Scale = args.Scale;
     });
 
+    async Task Alert(string message)
+    {
+        //await CommunityToolkit.Maui.Alerts.Snackbar.Make(message).Show();
+        await CommunityToolkit.Maui.Alerts.Toast.Make(message).Show();
+
+        Message = message;
+        OnPropertyChanged(nameof(Message));
+    }
+    
+
     public ICommand TextSwipedCommand => new Command(async () =>
     {
         var message = "Swipe gesture detected";
-        await CommunityToolkit.Maui.Alerts.Toast.Make(message).Show();
+        await Alert(message);
 
         // await navigation.PushAsync(new ContentPage {
         //     Title = "Web",
@@ -46,7 +58,7 @@ public class MainPageViewModel(INavigation navigation) : BindableObject
     public ICommand OnTapCommand => new Command(async () =>
     {
         var message = "Tap command received";
-        await CommunityToolkit.Maui.Alerts.Toast.Make(message).Show();
+        await Alert(message);
         
         // await navigation.PushAsync(new ContentPage {
         //     Title = "Web",
@@ -65,7 +77,7 @@ public class MainPageViewModel(INavigation navigation) : BindableObject
         var absXy = args.GetCoordinates();
         var message = $"{title} received at position ({args.Point.X:0.0},{args.Point.Y:0.0}) relative to the element, and ({absXy.X:0.0},{absXy.Y:0.0}) relative to the root view";
 
-        await CommunityToolkit.Maui.Alerts.Toast.Make(message).Show();
+        await Alert(message);
         
 #if !WINDOWS
         await UserInteraction.Menu(default, position: args.GetAbsoluteBoundsF(), cancelButton: "Cancel", otherButtons: ["Do something"]);

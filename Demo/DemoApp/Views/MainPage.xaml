@@ -7,6 +7,7 @@
     x:DataType="viewModels:MainPageViewModel"
     BackgroundColor="AntiqueWhite"
     Title="Gestures Demo">
+    
     <ContentPage.Resources>
         <Style TargetType="Label">
             <Setter Property="TextColor" Value="Black"/>
@@ -17,9 +18,11 @@
         </Style>
     </ContentPage.Resources> 
     
-       <VerticalStackLayout Spacing="20" Padding="20">
+    <VerticalStackLayout Spacing="20" Padding="20">
+        
+        <Label Text="{Binding Message}" Padding="10" BackgroundColor="LightBlue" />
 
-        <!--  ios: gestures does not work directly on a forms label  -->
+        <!--  ios: gestures do not work directly on a forms label  -->
         <VerticalStackLayout mauiGestures:Gesture.TapCommand="{Binding OnTapCommand}" IsEnabled="True">
             <Label Text="1.Tap this text" />
         </VerticalStackLayout>

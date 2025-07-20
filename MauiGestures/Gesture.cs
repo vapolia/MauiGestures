@@ -121,32 +121,30 @@ public static class Gesture
     public static object GetCommandParameter(BindableObject view) => view.GetValue(CommandParameterProperty);
     public static void SetCommandParameter(BindableObject view, object value) => view.SetValue(CommandParameterProperty, value);
 
-    private static void GetOrCreateEffect(View view)
+    private static void GetOrCreateBehavior(View view)
     {
-        var effect = (GestureEffect?)view.Effects.FirstOrDefault(e => e is GestureEffect);
-        if (effect == null)
+        var behavior = view.Behaviors.OfType<GestureBehavior>().FirstOrDefault();
+        if (behavior == null)
         {
-            effect = new ();
-            view.Effects.Add(effect);
+            behavior = new GestureBehavior();
+            view.Behaviors.Add(behavior);
         }
     }
 
     private static void CommandChanged(BindableObject bindable, object oldValue, object newValue)
     {
         if (bindable is View view)
-            GetOrCreateEffect(view);
-    }
-    
-    class GestureEffect : RoutingEffect
-    {
+            GetOrCreateBehavior(view);
     }
 
+    /// <summary>
+    /// This method is no longer needed as gestures now use behaviors instead of effects.
+    /// You can safely remove this call from your MauiProgram.cs file.
+    /// </summary>
+    [Obsolete("This method is no longer needed as gestures now use behaviors instead of effects. You can safely remove this call from your MauiProgram.cs file.", false)]
     public static MauiAppBuilder UseAdvancedGestures(this MauiAppBuilder builder)
     {
-        builder.ConfigureEffects(effects =>
-        {
-            effects.Add<GestureEffect, PlatformGestureEffect>();
-        });
+        // No longer needed - behaviors are automatically attached when gesture properties are set
         return builder;
     }
 }
