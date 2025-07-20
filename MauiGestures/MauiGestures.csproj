@@ -50,7 +50,7 @@
         <Copyright>© 2016-2024 Benjamin Mayrargue</Copyright>
         <RepositoryUrl>https://github.com/vapolia/MauiGestures/</RepositoryUrl>
         <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
-        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageIcon>icon.png</PackageIcon>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
