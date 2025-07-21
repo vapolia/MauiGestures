@@ -52,8 +52,8 @@ public static class Gesture
 
     public static readonly BindableProperty CommandParameterProperty = BindableProperty.CreateAttached("CommandParameter", typeof(object), typeof(Gesture), null);
 
-    public static readonly BindableProperty WindowsProcessIntermediatePointsProperty = BindableProperty.CreateAttached("WindowsProcessIntermediatePoints", typeof(bool), typeof(Gesture), false, propertyChanged: CommandChanged);
-    public static readonly BindableProperty WindowsCrossSlideHorizontallyProperty = BindableProperty.CreateAttached("WindowsCrossSlideHorizontally", typeof(bool), typeof(Gesture), true, propertyChanged: CommandChanged);
+    public static readonly BindableProperty WindowsProcessIntermediatePointsProperty = BindableProperty.CreateAttached(nameof(WindowsProcessIntermediatePoints), typeof(bool), typeof(Gesture), false, propertyChanged: CommandChanged);
+    public static readonly BindableProperty WindowsCrossSlideHorizontallyProperty = BindableProperty.CreateAttached(nameof(WindowsCrossSlideHorizontally), typeof(bool), typeof(Gesture), true, propertyChanged: CommandChanged);
 
     public static ICommand GetLongPressCommand(BindableObject view) => (ICommand)view.GetValue(LongPressCommandProperty);
     public static ICommand GetTapCommand(BindableObject view) => (ICommand)view.GetValue(TapCommandProperty);
@@ -84,8 +84,8 @@ public static class Gesture
     /// </summary>
     public static ICommand GetPanPointCommand(BindableObject view) => (ICommand)view.GetValue(PanPointCommandProperty);
 
-    public static bool GetWindowsProcessIntermediatePoints(BindableObject view) => (bool)view.GetValue(WindowsProcessIntermediatePointsProperty);
-    public static bool GetWindowsCrossSlideHorizontally(BindableObject view) => (bool)view.GetValue(WindowsCrossSlideHorizontallyProperty);
+    public static bool WindowsProcessIntermediatePoints(BindableObject view) => (bool)view.GetValue(WindowsProcessIntermediatePointsProperty);
+    public static bool WindowsCrossSlideHorizontally(BindableObject view) => (bool)view.GetValue(WindowsCrossSlideHorizontallyProperty);
 
     public static void SetLongPressCommand(BindableObject view, ICommand value) => view.SetValue(LongPressCommandProperty, value);
     public static void SetTapCommand(BindableObject view, ICommand value) => view.SetValue(TapCommandProperty, value);

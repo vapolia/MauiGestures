@@ -63,9 +63,19 @@ internal partial class GestureBehavior : PlatformBehavior<View>
             commandParameter = Gesture.GetCommandParameter(element);
 
 #if WINDOWS
-            processIntermediatePoints = Gesture.GetWindowsProcessIntermediatePoints(element);
+            processIntermediatePoints = Gesture.WindowsProcessIntermediatePoints(element);
             if (detector != null)
-                detector.CrossSlideHorizontally = Gesture.GetWindowsCrossSlideHorizontally(element);
+            {
+                try
+                {
+                    detector.CrossSlideHorizontally = Gesture.WindowsCrossSlideHorizontally(element);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Failed to set CrossSlideHorizontally: {e.Message}");
+                    Console.WriteLine(e);
+                }
+            }
 #endif
 
 #if IOS || MACCATALYST
