@@ -64,12 +64,15 @@ internal partial class GestureBehavior : PlatformBehavior<View>
 
 #if WINDOWS
             processIntermediatePoints = Gesture.GetWindowsProcessIntermediatePoints(element);
-            detector.CrossSlideHorizontally = Gesture.GetWindowsCrossSlideHorizontally(element);
+            if (detector != null)
+                detector.CrossSlideHorizontally = Gesture.GetWindowsCrossSlideHorizontally(element);
 #endif
 
 #if IOS || MACCATALYST
-            panDetector!.IsImmediate = Gesture.GetIsPanImmediate(element);
-            pinchDetector!.IsImmediate = Gesture.GetIsPinchImmediate(element);
+            if(panDetector != null)
+                panDetector!.IsImmediate = Gesture.GetIsPanImmediate(element);
+            if(pinchDetector != null)
+                pinchDetector!.IsImmediate = Gesture.GetIsPinchImmediate(element);
 #endif
         }
     }

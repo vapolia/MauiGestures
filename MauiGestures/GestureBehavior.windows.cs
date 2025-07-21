@@ -240,7 +240,7 @@ internal partial class GestureBehavior
     {
         var platformView = (UIElement)sender;
         var point = args.GetCurrentPoint(platformView);
-        detector.ProcessDownEvent(point);
+        detector?.ProcessDownEvent(point);
         platformView.CapturePointer(args.Pointer);
         args.Handled = true;
     }
@@ -265,7 +265,7 @@ internal partial class GestureBehavior
 
         try
         {
-            detector.ProcessMoveEvents(points);
+            detector?.ProcessMoveEvents(points);
         }
         catch (COMException e)
         {
@@ -296,7 +296,7 @@ internal partial class GestureBehavior
     {
         var platformView = (UIElement)sender;
         var point = args.GetCurrentPoint(platformView);
-        detector.ProcessUpEvent(point);
+        detector?.ProcessUpEvent(point);
         platformView.ReleasePointerCapture(args.Pointer);
         args.Handled = true;
     }
@@ -304,7 +304,7 @@ internal partial class GestureBehavior
     private void ControlOnPointerCanceled(object sender, PointerRoutedEventArgs args)
     {
         var platformView = (UIElement)sender;
-        detector.CompleteGesture();
+        detector?.CompleteGesture();
         platformView.ReleasePointerCapture(args.Pointer);
         args.Handled = true;
     }
