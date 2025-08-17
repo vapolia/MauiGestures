@@ -56,6 +56,7 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageProjectUrl>https://vapolia.eu</PackageProjectUrl>
         <PackageReleaseNotes>
+            2.0.1: Add more helpers
             2.0.0: Replaced effects by behaviors
             1.1.1: Windows contributions (whodges) + nuget updates
             1.1.0: Upgraded to net9 

@@ -20,7 +20,13 @@ public static class ElementExtensions
     
     public static Point GetCoordinates(this PointEventArgs args)
         => (args.Element as VisualElement).GetCoordinates();
-    
+
+    public static RectF GetAbsoluteBoundsF(this VisualElement? element)
+    {
+        var rect = element.GetAbsoluteBounds();
+        return new((float)rect.X, (float)rect.Y, (float)rect.Width, (float)rect.Height);
+    }
+
     public static Rect GetAbsoluteBounds(this VisualElement? element)
     {
         if(element == null)
