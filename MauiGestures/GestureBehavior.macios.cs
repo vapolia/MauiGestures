@@ -20,18 +20,18 @@ internal partial class GestureBehavior
         //else
         //    tapDetector.ShouldReceiveTouch = (s, args) => true;
 
-        var tapDetector = CreateTapRecognizer(view, platformView, () => (tapCommand,tapPointCommand));
-        var doubleTapDetector = CreateTapRecognizer(view, platformView, () => (doubleTapCommand, doubleTapPointCommand));
+        var tapDetector = CreateTapRecognizer(view, platformView, () => (tapCommand,tapPointCommand), false);
+        var doubleTapDetector = CreateTapRecognizer(view, platformView, () => (doubleTapCommand, doubleTapPointCommand), true);
         doubleTapDetector.NumberOfTapsRequired = 2;
         var longPressDetector = CreateLongPressRecognizer(view, platformView, () => (longPressCommand, longPressPointCommand));
 
-        panDetector = CreatePanRecognizer(platformView, () => (panCommand, panPointCommand));
-        pinchDetector = CreatePinchRecognizer(platformView, () => pinchCommand);
+        panDetector = CreatePanRecognizer(view, platformView, () => (panCommand, panPointCommand));
+        pinchDetector = CreatePinchRecognizer(view, platformView, () => pinchCommand);
 
-        var swipeLeftDetector = CreateSwipeRecognizer(() => swipeLeftCommand, UISwipeGestureRecognizerDirection.Left);
-        var swipeRightDetector = CreateSwipeRecognizer(() => swipeRightCommand, UISwipeGestureRecognizerDirection.Right);
-        var swipeUpDetector = CreateSwipeRecognizer(() => swipeTopCommand, UISwipeGestureRecognizerDirection.Up);
-        var swipeDownDetector = CreateSwipeRecognizer(() => swipeBottomCommand, UISwipeGestureRecognizerDirection.Down);
+        var swipeLeftDetector = CreateSwipeRecognizer(view, () => swipeLeftCommand, UISwipeGestureRecognizerDirection.Left);
+        var swipeRightDetector = CreateSwipeRecognizer(view, () => swipeRightCommand, UISwipeGestureRecognizerDirection.Right);
+        var swipeUpDetector = CreateSwipeRecognizer(view, () => swipeTopCommand, UISwipeGestureRecognizerDirection.Up);
+        var swipeDownDetector = CreateSwipeRecognizer(view, () => swipeBottomCommand, UISwipeGestureRecognizerDirection.Down);
 
         return 
         [
@@ -48,7 +48,7 @@ internal partial class GestureBehavior
         return args;
     }
 
-    private UITapGestureRecognizer CreateTapRecognizer(View view, UIView platformView, Func<(ICommand? Command,ICommand? PointCommand)> getCommand)
+    private UITapGestureRecognizer CreateTapRecognizer(View view, UIView platformView, Func<(ICommand? Command,ICommand? PointCommand)> getCommand, bool isDoubleTap)
     {
         return new (recognizer =>
         {
@@ -57,10 +57,24 @@ internal partial class GestureBehavior
             {
                 if (command?.CanExecute(commandParameter) == true)
                     command.Execute(commandParameter);
-                
+
                 var args = GetPointArgs(view, platformView, recognizer);
                 if(pointCommand?.CanExecute(args) == true)
                     pointCommand.Execute(args);
+
+                // Trigger events
+                if (isDoubleTap)
+                {
+                    OnDoubleTap(view, EventArgs.Empty);
+                    if (pointCommand != null)
+                        OnDoubleTapPoint(view, args);
+                }
+                else
+                {
+                    OnTap(view, EventArgs.Empty);
+                    if (pointCommand != null)
+                        OnTapPoint(view, args);
+                }
             }
         })
         {
@@ -85,6 +99,10 @@ internal partial class GestureBehavior
                     var args = GetPointArgs(view, platformView, recognizer);
                     if (pointCommand?.CanExecute(args) == true)
                         pointCommand.Execute(args);
+
+                    OnLongPress(view, EventArgs.Empty);
+                    if (pointCommand != null)
+                        OnLongPressPoint(view, args);
                 }
             }
         })
@@ -96,13 +114,23 @@ internal partial class GestureBehavior
     }
 
 
-    private UISwipeGestureRecognizer CreateSwipeRecognizer(Func<ICommand?> getCommand, UISwipeGestureRecognizerDirection direction)
+    private UISwipeGestureRecognizer CreateSwipeRecognizer(View view, Func<ICommand?> getCommand, UISwipeGestureRecognizerDirection direction)
     {
         return new (() =>
         {
             var handler = getCommand();
             if (handler?.CanExecute(commandParameter) == true)
                 handler.Execute(commandParameter);
+
+            // Trigger swipe events based on direction
+            if (direction == UISwipeGestureRecognizerDirection.Left)
+                OnSwipeLeft(view, EventArgs.Empty);
+            else if (direction == UISwipeGestureRecognizerDirection.Right)
+                OnSwipeRight(view, EventArgs.Empty);
+            else if (direction == UISwipeGestureRecognizerDirection.Up)
+                OnSwipeTop(view, EventArgs.Empty);
+            else if (direction == UISwipeGestureRecognizerDirection.Down)
+                OnSwipeBottom(view, EventArgs.Empty);
         })
         {
             Enabled = false,
@@ -111,7 +139,7 @@ internal partial class GestureBehavior
         };
     }
         
-    private UIImmediatePinchGestureRecognizer CreatePinchRecognizer(UIView platformView, Func<ICommand?> getCommand)
+    private UIImmediatePinchGestureRecognizer CreatePinchRecognizer(View view, UIView platformView, Func<ICommand?> getCommand)
     {
         return new (recognizer =>
         {
@@ -153,6 +181,8 @@ internal partial class GestureBehavior
                 var parameters = new PinchEventArgs(status, (current0, current1), pinchOrigin);
                 if (command.CanExecute(parameters))
                     command.Execute(parameters);
+
+                OnPinch(view, parameters);
             }
         })
         {
@@ -161,7 +191,7 @@ internal partial class GestureBehavior
         };
     }
 
-    private UIImmediatePanGestureRecognizer CreatePanRecognizer(UIView platformView, Func<(ICommand? Command, ICommand? PointCommand)> getCommand)
+    private UIImmediatePanGestureRecognizer CreatePanRecognizer(View view, UIView platformView, Func<(ICommand? Command, ICommand? PointCommand)> getCommand)
     {
         return new UIImmediatePanGestureRecognizer(recognizer =>
         {
@@ -189,11 +219,15 @@ internal partial class GestureBehavior
                         //UIGestureRecognizerState.Cancelled => GestureStatus.Canceled,
                         _ => GestureStatus.Canceled,
                     };
-                        
+
                     var parameter = new PanEventArgs(gestureStatus, point);
                     if (pointCommand.CanExecute(parameter))
                         pointCommand.Execute(parameter);
+
+                    OnPanPoint(view, parameter);
                 }
+
+                OnPan(view, EventArgs.Empty);
             }
         })
         {
@@ -219,7 +253,10 @@ internal partial class GestureBehavior
                     if (pointCommand.CanExecute(parameter))
                         pointCommand.Execute(parameter);
                     if (!parameter.CancelGesture)
+                    {
+                        OnPanPoint(view, parameter);
                         return true;
+                    }
                 }
 
                 return false;

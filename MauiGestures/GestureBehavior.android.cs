@@ -29,12 +29,16 @@ internal partial class GestureBehavior
 
                     if (tapPointCommand.CanExecute(args))
                         tapPointCommand.Execute(args);
+
+                    OnTapPoint(view, args);
                 }
 
                 if(tapCommand != null) {
                     if (tapCommand.CanExecute(commandParameter))
                         tapCommand.Execute(commandParameter);
                 }
+
+                OnTap(view, EventArgs.Empty);
             },
             DoubleTapAction = motionEvent =>
             {
@@ -46,12 +50,16 @@ internal partial class GestureBehavior
 
                     if (doubleTapPointCommand.CanExecute(args))
                         doubleTapPointCommand.Execute(args);
+
+                    OnDoubleTapPoint(view, args);
                 }
 
                 if (doubleTapCommand != null) {
                     if (doubleTapCommand.CanExecute(commandParameter))
                         doubleTapCommand.Execute(commandParameter);
                 }
+
+                OnDoubleTap(view, EventArgs.Empty);
             },
             SwipeLeftAction = _ =>
             {
@@ -59,6 +67,7 @@ internal partial class GestureBehavior
                     if (swipeLeftCommand.CanExecute(commandParameter))
                         swipeLeftCommand.Execute(commandParameter);
                 }
+                OnSwipeLeft(view, EventArgs.Empty);
             },
             SwipeRightAction = _ =>
             {
@@ -66,6 +75,7 @@ internal partial class GestureBehavior
                     if (swipeRightCommand.CanExecute(commandParameter))
                         swipeRightCommand.Execute(commandParameter);
                 }
+                OnSwipeRight(view, EventArgs.Empty);
             },
             SwipeTopAction = _ =>
             {
@@ -73,6 +83,7 @@ internal partial class GestureBehavior
                     if (swipeTopCommand.CanExecute(commandParameter))
                         swipeTopCommand.Execute(commandParameter);
                 }
+                OnSwipeTop(view, EventArgs.Empty);
             },
             SwipeBottomAction = _ =>
             {
@@ -80,6 +91,7 @@ internal partial class GestureBehavior
                     if (swipeBottomCommand.CanExecute(commandParameter))
                         swipeBottomCommand.Execute(commandParameter);
                 }
+                OnSwipeBottom(view, EventArgs.Empty);
             },
             PanAction = (initialDown, currentMove) =>
             {
@@ -105,12 +117,16 @@ internal partial class GestureBehavior
                         panPointCommand.Execute(parameter);
                     if (parameter.CancelGesture)
                         continueGesture = false;
+
+                    OnPanPoint(view, parameter);
                 }
 
                 if (panCommand != null) {
                     if (panCommand.CanExecute(commandParameter))
                         panCommand.Execute(commandParameter);
                 }
+
+                OnPan(view, EventArgs.Empty);
 
                 return continueGesture;
             },
@@ -122,7 +138,7 @@ internal partial class GestureBehavior
                     var origin1 = PxToDp(new Point(initialDown.GetX(1), initialDown.GetY(1)));
                     var current0 = PxToDp(new Point(currentMove.GetX(0), currentMove.GetY(0)));
                     var current1 = PxToDp(new Point(currentMove.GetX(1), currentMove.GetY(1)));
-                        
+
                     var status = currentMove.Action switch
                     {
                         MotionEventActions.Down => GestureStatus.Started,
@@ -135,6 +151,8 @@ internal partial class GestureBehavior
                     var parameters = new PinchEventArgs(status, (current0, current1), (origin0, origin1));
                     if (pinchCommand.CanExecute(parameters))
                         pinchCommand.Execute(parameters);
+
+                    OnPinch(view, parameters);
                 }
             },
             LongPressAction = motionEvent =>
@@ -148,12 +166,16 @@ internal partial class GestureBehavior
 
                     if (longPressPointCommand.CanExecute(args))
                         longPressPointCommand.Execute(args);
+
+                    OnLongPressPoint(view, args);
                 }
 
                 if (longPressCommand != null) {
                     if (longPressCommand.CanExecute(commandParameter))
                         longPressCommand.Execute(commandParameter);
                 }
+
+                OnLongPress(view, EventArgs.Empty);
             },
         };
     }

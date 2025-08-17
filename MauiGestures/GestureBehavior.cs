@@ -23,6 +23,14 @@ internal partial class GestureBehavior : PlatformBehavior<View>
     /// </summary>
     private ICommand? pinchCommand;
 
+    /// <summary>
+    /// Event handlers
+    /// </summary>
+    private EventHandler? tapEvent, doubleTapEvent, longPressEvent, panEvent, swipeLeftEvent, swipeRightEvent, swipeTopEvent, swipeBottomEvent;
+    private EventHandler<PinchEventArgs>? pinchEvent;
+    private EventHandler<PointEventArgs>? tapPointEvent, doubleTapPointEvent, longPressPointEvent;
+    private EventHandler<PanEventArgs>? panPointEvent;
+
 #if WINDOWS
     private bool processIntermediatePoints;
 #endif
@@ -62,6 +70,21 @@ internal partial class GestureBehavior : PlatformBehavior<View>
 
             commandParameter = Gesture.GetCommandParameter(element);
 
+            // Get event handlers
+            tapEvent = Gesture.GetTapEvent(element);
+            doubleTapEvent = Gesture.GetDoubleTapEvent(element);
+            longPressEvent = Gesture.GetLongPressEvent(element);
+            panEvent = Gesture.GetPanEvent(element);
+            pinchEvent = Gesture.GetPinchEvent(element);
+            swipeLeftEvent = Gesture.GetSwipeLeftEvent(element);
+            swipeRightEvent = Gesture.GetSwipeRightEvent(element);
+            swipeTopEvent = Gesture.GetSwipeTopEvent(element);
+            swipeBottomEvent = Gesture.GetSwipeBottomEvent(element);
+            tapPointEvent = Gesture.GetTapPointEvent(element);
+            doubleTapPointEvent = Gesture.GetDoubleTapPointEvent(element);
+            longPressPointEvent = Gesture.GetLongPressPointEvent(element);
+            panPointEvent = Gesture.GetPanPointEvent(element);
+
 #if WINDOWS
             processIntermediatePoints = Gesture.WindowsProcessIntermediatePoints(element);
             if (detector != null)
@@ -85,5 +108,71 @@ internal partial class GestureBehavior : PlatformBehavior<View>
                 pinchDetector!.IsImmediate = Gesture.GetIsPinchImmediate(element);
 #endif
         }
+    }
+
+    // Helper methods to trigger events
+    protected void OnTap(object sender, EventArgs e)
+    {
+        tapEvent?.Invoke(sender, e);
+    }
+
+    protected void OnDoubleTap(object sender, EventArgs e)
+    {
+        doubleTapEvent?.Invoke(sender, e);
+    }
+
+    protected void OnLongPress(object sender, EventArgs e)
+    {
+        longPressEvent?.Invoke(sender, e);
+    }
+
+    protected void OnPan(object sender, EventArgs e)
+    {
+        panEvent?.Invoke(sender, e);
+    }
+
+    protected void OnPinch(object sender, PinchEventArgs e)
+    {
+        pinchEvent?.Invoke(sender, e);
+    }
+
+    protected void OnSwipeLeft(object sender, EventArgs e)
+    {
+        swipeLeftEvent?.Invoke(sender, e);
+    }
+
+    protected void OnSwipeRight(object sender, EventArgs e)
+    {
+        swipeRightEvent?.Invoke(sender, e);
+    }
+
+    protected void OnSwipeTop(object sender, EventArgs e)
+    {
+        swipeTopEvent?.Invoke(sender, e);
+    }
+
+    protected void OnSwipeBottom(object sender, EventArgs e)
+    {
+        swipeBottomEvent?.Invoke(sender, e);
+    }
+
+    protected void OnTapPoint(object sender, PointEventArgs e)
+    {
+        tapPointEvent?.Invoke(sender, e);
+    }
+
+    protected void OnDoubleTapPoint(object sender, PointEventArgs e)
+    {
+        doubleTapPointEvent?.Invoke(sender, e);
+    }
+
+    protected void OnLongPressPoint(object sender, PointEventArgs e)
+    {
+        longPressPointEvent?.Invoke(sender, e);
+    }
+
+    protected void OnPanPoint(object sender, PanEventArgs e)
+    {
+        panPointEvent?.Invoke(sender, e);
     }
 }

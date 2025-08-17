@@ -64,25 +64,25 @@ internal partial class GestureBehavior
         {
             if (args.TapCount == 1)
             {
-                TriggerCommand(tapCommand, commandParameter);
+                TriggerCommandAndEvent(tapCommand, commandParameter, () => OnTap(view, EventArgs.Empty));
                 var pointArgs = new PointEventArgs(new Point(args.Position.X, args.Position.Y), view, view.BindingContext);
-                TriggerCommand(tapPointCommand, pointArgs);
+                TriggerCommandAndEvent(tapPointCommand, pointArgs, () => OnTapPoint(view, pointArgs));
             }
-            else if (args.TapCount == 2) 
+            else if (args.TapCount == 2)
             {
-                TriggerCommand(doubleTapCommand, commandParameter);
+                TriggerCommandAndEvent(doubleTapCommand, commandParameter, () => OnDoubleTap(view, EventArgs.Empty));
                 var pointArgs = new PointEventArgs(new Point(args.Position.X, args.Position.Y), view, view.BindingContext);
-                TriggerCommand(doubleTapPointCommand, pointArgs);
+                TriggerCommandAndEvent(doubleTapPointCommand, pointArgs, () => OnDoubleTapPoint(view, pointArgs));
             }
         };
 
         recognizer.Holding += (sender, args) =>
         {
-            if (args.HoldingState == HoldingState.Started) 
+            if (args.HoldingState == HoldingState.Started)
             {
-                TriggerCommand(longPressCommand, commandParameter);
+                TriggerCommandAndEvent(longPressCommand, commandParameter, () => OnLongPress(view, EventArgs.Empty));
                 var pointArgs = new PointEventArgs(new Point(args.Position.X, args.Position.Y), view, view.BindingContext);
-                TriggerCommand(longPressPointCommand, pointArgs);
+                TriggerCommandAndEvent(longPressPointCommand, pointArgs, () => OnLongPressPoint(view, pointArgs));
             }
         };
 
@@ -99,7 +99,7 @@ internal partial class GestureBehavior
                                        new Point(currentPointer2.Position.X, currentPointer2.Position.Y));
 
                 var parameters = new PinchEventArgs(GestureStatus.Started, startingPinchPoints, startingPinchPoints);
-                TriggerCommand(pinchCommand, parameters);
+                TriggerCommandAndEvent(pinchCommand, parameters, () => OnPinch(view, parameters));
 
                 pinching = true;
             }
@@ -111,14 +111,14 @@ internal partial class GestureBehavior
                                           new Point(currentPointer2.Position.X, currentPointer2.Position.Y));
 
                     var parameters = new PinchEventArgs(GestureStatus.Running, currentPinchPoints, startingPinchPoints);
-                    TriggerCommand(pinchCommand, parameters);
+                    TriggerCommandAndEvent(pinchCommand, parameters, () => OnPinch(view, parameters));
                 }
             }
             else   // panning
             {
-                TriggerCommand(panCommand, commandParameter);
+                TriggerCommandAndEvent(panCommand, commandParameter, () => OnPan(view, EventArgs.Empty));
                 var parameters = new PanEventArgs(panning ? GestureStatus.Running : GestureStatus.Started, new Point(args.Position.X, args.Position.Y));
-                TriggerCommand(panPointCommand, parameters);
+                TriggerCommandAndEvent(panPointCommand, parameters, () => OnPanPoint(view, parameters));
 
                 panning = true;
             }
@@ -129,15 +129,15 @@ internal partial class GestureBehavior
             if (pinching)
             {
                 var parameters = new PinchEventArgs(GestureStatus.Completed, currentPinchPoints, startingPinchPoints);
-                TriggerCommand(pinchCommand, parameters);
+                TriggerCommandAndEvent(pinchCommand, parameters, () => OnPinch(view, parameters));
 
                 pinching = false;
             }
             else if (panning)
             {
-                TriggerCommand(panCommand, commandParameter);
+                TriggerCommandAndEvent(panCommand, commandParameter, () => OnPan(view, EventArgs.Empty));
                 var parameters = new PanEventArgs(GestureStatus.Completed, new Point(args.Position.X, args.Position.Y));
-                TriggerCommand(panPointCommand, parameters);
+                TriggerCommandAndEvent(panPointCommand, parameters, () => OnPanPoint(view, parameters));
 
                 panning = false;
             }
@@ -179,12 +179,18 @@ internal partial class GestureBehavior
                     if (isHorizontalSwipe)
                     {
                         var isLeftSwipe = deltaX < 0;
-                        TriggerCommand(isLeftSwipe ? swipeLeftCommand : swipeRightCommand, commandParameter);
+                        if (isLeftSwipe)
+                            TriggerCommandAndEvent(swipeLeftCommand, commandParameter, () => OnSwipeLeft(view, EventArgs.Empty));
+                        else
+                            TriggerCommandAndEvent(swipeRightCommand, commandParameter, () => OnSwipeRight(view, EventArgs.Empty));
                     }
                     else
                     {
                         var isTopSwipe = deltaY < 0;
-                        TriggerCommand(isTopSwipe ? swipeTopCommand : swipeBottomCommand, commandParameter);
+                        if (isTopSwipe)
+                            TriggerCommandAndEvent(swipeTopCommand, commandParameter, () => OnSwipeTop(view, EventArgs.Empty));
+                        else
+                            TriggerCommandAndEvent(swipeBottomCommand, commandParameter, () => OnSwipeBottom(view, EventArgs.Empty));
                     }
                     break;
             }
@@ -197,6 +203,12 @@ internal partial class GestureBehavior
     {
         if(command?.CanExecute(parameter) == true)
             command.Execute(parameter);
+    }
+
+    private void TriggerCommandAndEvent(ICommand? command, object? parameter, Action eventTrigger)
+    {
+        TriggerCommand(command, parameter);
+        eventTrigger?.Invoke();
     }
 
     protected override void OnAttachedTo(View view, Microsoft.UI.Xaml.FrameworkElement platformView)
