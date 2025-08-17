@@ -1,19 +1,10 @@
 using System.ComponentModel;
 using System.Windows.Input;
-using Microsoft.Maui.Controls.Platform;
 
 namespace MauiGestures;
 
-internal partial class PlatformGestureEffect : PlatformEffect
+internal partial class GestureBehavior : PlatformBehavior<View>
 {
-    protected override partial void OnAttached();
-    protected override partial void OnDetached();
-
-#if !(IOS || ANDROID || MACCATALYST || WINDOWS)
-    protected override partial void OnAttached() {}
-    protected override partial void OnDetached() {}
-#endif
-    
     private object? commandParameter;
     
     /// <summary>
@@ -36,11 +27,21 @@ internal partial class PlatformGestureEffect : PlatformEffect
     private bool processIntermediatePoints;
 #endif
 
-    protected override void OnElementPropertyChanged(PropertyChangedEventArgs args)
+    void OnAttached(View view)
+    {
+        view.PropertyChanged += OnViewPropertyChanged;
+    }
+
+    void OnDetach(View view)
+    {
+        view.PropertyChanged -= OnViewPropertyChanged;
+    }
+
+    void OnViewPropertyChanged(object? sender, PropertyChangedEventArgs args)
     {
         if (args.PropertyName is not "X" and not "Y" and not "Width" and not "Height")
         {
-            var element = Element;
+            var element = (View)sender!;
             
             tapCommand = Gesture.GetTapCommand(element);
             panCommand = Gesture.GetPanCommand(element);
@@ -62,13 +63,26 @@ internal partial class PlatformGestureEffect : PlatformEffect
             commandParameter = Gesture.GetCommandParameter(element);
 
 #if WINDOWS
-            processIntermediatePoints = Gesture.GetWindowsProcessIntermediatePoints(element);
-            detector.CrossSlideHorizontally = Gesture.GetWindowsCrossSlideHorizontally(element);
+            processIntermediatePoints = Gesture.WindowsProcessIntermediatePoints(element);
+            if (detector != null)
+            {
+                try
+                {
+                    detector.CrossSlideHorizontally = Gesture.WindowsCrossSlideHorizontally(element);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Failed to set CrossSlideHorizontally: {e.Message}");
+                    Console.WriteLine(e);
+                }
+            }
 #endif
 
 #if IOS || MACCATALYST
-            panDetector.IsImmediate = Gesture.GetIsPanImmediate(element);
-            pinchDetector.IsImmediate = Gesture.GetIsPinchImmediate(element);
+            if(panDetector != null)
+                panDetector!.IsImmediate = Gesture.GetIsPanImmediate(element);
+            if(pinchDetector != null)
+                pinchDetector!.IsImmediate = Gesture.GetIsPinchImmediate(element);
 #endif
         }
     }

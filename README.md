@@ -4,7 +4,7 @@
 
 # Supported Platforms
 
-iOS, Android, Windows, Mac
+iOS, MacOS, Android, Windows 
 
 # Maui Gesture Effects
 
@@ -28,13 +28,7 @@ Or in code:
 
 # Quick start
 Add the above nuget package to your Maui project   
-then add this line to your maui app builder:
-
-```c#
-using MauiGestures;
-...
-builder.UseAdvancedGestures();
-``` 
+Gestures are now automatically enabled when you use gesture properties - no additional setup required!
 
 The view on which the gesture is applied should have the property `InputTransparent="False"` which activates user interaction on it. If the view is still not receiving tap events, try adding a background color. That forces Maui to wrap some controls in an invisible container.
 
@@ -175,14 +169,14 @@ Gesture.SetTapPointCommand(this, new Command<PointEventArgs>(args =>
 
 # Limitations
 
-Only commands are supported (PR welcome for events). No .NET events. So you must use the MVVM pattern.
+Only commands are supported (PR welcome for events). So you must use the MVVM pattern.
 
 Swipe commands are not supported on Windows because of a curious bug (event not received). If you find it, notify me!
 PinchCommand is not supported (yet) on Windows. PR welcome.
 
 If your command is not receiving events, make sure that:
 - you used the correct handler. Ie: the `LongPressPointCommand` should be `new Command<PointEventArgs>(args => ...)`
-- you set `IsEnabled="True"` and `InputTransparent="False"` on the element
+- you set `IsEnabled="True"` and `InputTransparent="False"` on the element (and InputTransparent="True" on all its children)
 
 Windows requires the fall creator update.  
 

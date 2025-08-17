@@ -1,17 +1,19 @@
 using System.ComponentModel;
 using Android.Util;
 using Android.Views;
-using View = Android.Views.View;
+using AndroidView = Android.Views.View;
+using View = Microsoft.Maui.Controls.View;
 
 namespace MauiGestures;
 
-internal partial class PlatformGestureEffect
+internal partial class GestureBehavior
 {
+    private InternalGestureDetector? tapDetector;
+    
     private GestureDetector? gestureRecognizer;
-    private readonly InternalGestureDetector tapDetector;
     private DisplayMetrics? displayMetrics;
 
-    public PlatformGestureEffect()
+    void CreateGesture(View view)
     {
         tapDetector = new()
         {
@@ -23,7 +25,7 @@ internal partial class PlatformGestureEffect
                     var x = motionEvent.GetX();
                     var y = motionEvent.GetY();
                     var point = PxToDp(new Point(x,y));
-                    var args = new PointEventArgs(point, Element, Element.BindingContext);
+                    var args = new PointEventArgs(point, view, view.BindingContext);
 
                     if (tapPointCommand.CanExecute(args))
                         tapPointCommand.Execute(args);
@@ -40,7 +42,7 @@ internal partial class PlatformGestureEffect
                     var x = motionEvent.GetX();
                     var y = motionEvent.GetY();
                     var point = PxToDp(new Point(x, y));
-                    var args = new PointEventArgs(point, Element, Element.BindingContext);
+                    var args = new PointEventArgs(point, view, view.BindingContext);
 
                     if (doubleTapPointCommand.CanExecute(args))
                         doubleTapPointCommand.Execute(args);
@@ -126,7 +128,7 @@ internal partial class PlatformGestureEffect
                         MotionEventActions.Down => GestureStatus.Started,
                         MotionEventActions.Move => GestureStatus.Running,
                         MotionEventActions.Up => GestureStatus.Completed,
-                        MotionEventActions.Cancel => GestureStatus.Canceled,
+                        //MotionEventActions.Cancel => GestureStatus.Canceled,
                         _ => GestureStatus.Canceled
                     };
 
@@ -142,7 +144,7 @@ internal partial class PlatformGestureEffect
                     var x = motionEvent.GetX();
                     var y = motionEvent.GetY();
                     var point = PxToDp(new Point(x, y));
-                    var args = new PointEventArgs(point, Element, Element.BindingContext);
+                    var args = new PointEventArgs(point, view, view.BindingContext);
 
                     if (longPressPointCommand.CanExecute(args))
                         longPressPointCommand.Execute(args);
@@ -158,52 +160,56 @@ internal partial class PlatformGestureEffect
 
     private Point PxToDp(Point point)
     {
-        point.X /= displayMetrics.Density;
+        point.X /= displayMetrics!.Density;
         point.Y /= displayMetrics.Density;
         return point;
     }
 
-    protected override partial void OnAttached()
+    protected override void OnAttachedTo(View view, AndroidView platformView)
     {
-        var control = Control ?? Container;
+        CreateGesture(view);
 
-        var context = control.Context;
-        displayMetrics = context.Resources.DisplayMetrics;
-        tapDetector.Density = displayMetrics.Density;
+        var context = platformView.Context;
+        displayMetrics = context!.Resources!.DisplayMetrics!;
+        tapDetector!.Density = displayMetrics.Density;
 
         if (gestureRecognizer == null)
             gestureRecognizer = new ExtendedGestureDetector(context, tapDetector);
-        control.Touch += ControlOnTouch;
-        control.Clickable = true;
+        platformView.Touch += ControlOnTouch;
+        platformView.Clickable = true;
 
-        OnElementPropertyChanged(new PropertyChangedEventArgs(String.Empty));
+        OnAttached(view);
+        OnViewPropertyChanged(view, new PropertyChangedEventArgs(String.Empty));
     }
 
-    private void ControlOnTouch(object? sender, View.TouchEventArgs touchEventArgs)
+    private void ControlOnTouch(object? sender, AndroidView.TouchEventArgs touchEventArgs)
     {
         if( touchEventArgs.Event != null)
             gestureRecognizer?.OnTouchEvent(touchEventArgs.Event);
         touchEventArgs.Handled = false;
     }
 
-    protected override partial void OnDetached()
+    protected override void OnDetachedFrom(View view, AndroidView platformView)
     {
-        var control = Control ?? Container;
-        control.Touch -= ControlOnTouch;
+        OnDetach(view);
+        platformView.Touch -= ControlOnTouch;
 
         var g = gestureRecognizer;
         gestureRecognizer = null;
         g?.Dispose();
         displayMetrics = null;
+
+        tapDetector = null;
     }
 
     sealed class ExtendedGestureDetector : GestureDetector
     {
         private readonly IExtendedGestureListener? myGestureListener;
 
-        private ExtendedGestureDetector(IntPtr javaRef, Android.Runtime.JniHandleOwnership transfer) : base(javaRef, transfer)
-        { 
-        }
+        //Maui removed that everywhere
+        // private ExtendedGestureDetector(IntPtr javaRef, Android.Runtime.JniHandleOwnership transfer) : base(javaRef, transfer)
+        // { 
+        // }
 
         public ExtendedGestureDetector(Android.Content.Context context, IOnGestureListener listener) : base(context, listener)
         { 

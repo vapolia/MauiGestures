@@ -14,7 +14,7 @@ jobs:
     #Needs windows to build the windows version
     runs-on: windows-latest
     env:
-      NUPKG_MAJOR: 1.1.1
+      NUPKG_MAJOR: 2.0.1
       DOTNET_CLI_TELEMETRY_OPTOUT: true
       DOTNET_NOLOGO: true
       PROJECT: MauiGestures/MauiGestures.csproj
@@ -28,9 +28,6 @@ jobs:
         with:
           dotnet-version: 9.0.x
 
-#      - name: Install MAUI workload
-#        run: dotnet workload install maui
-
       - name: Build
         shell: pwsh
         run: dotnet build -c Release $env:PROJECT
@@ -38,7 +35,7 @@ jobs:
       - name: Package NuGets
         shell: pwsh
         env:
-          #required so if it contains special characters they are not interpreted by powershell
+          #required so if it contains special characters, they are not interpreted by Powershell
           NUGET_AUTH_TOKEN: ${{secrets.NUGETAPIKEY}}
           NUGET_TARGET: https://api.nuget.org/v3/index.json
         run: |
@@ -54,38 +51,3 @@ jobs:
           cd ./artifacts
           dotnet nuget push *.nupkg --skip-duplicate -k $env:NUGET_AUTH_TOKEN -s $env:NUGET_TARGET
           
-# github package uses storage space, which is a limited resource          
-
-#          echo "pkgverci=$VERSION" >> $GITHUB_OUTPUT
-#$pfxPath = Join-Path -Path $pwd -ChildPath "codesigncert.pfx"
-#[IO.File]::WriteAllBytes("$pfxPath", [System.Convert]::FromBase64String($env:CODESIGN_PFX))
-#nuget sign .\artifacts\*.nupkg -CertificatePath $pfxPath -Timestamper http://timestamp.entrust.net/TSS/RFC3161sha2TS
-
-#      - name: Artifacts
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: nupkg
-#          path: ./artifacts
-
-#  publish:
-#    name: Publish
-#    needs: build
-#    runs-on: windows-latest
-#    environment: Default
-#    if: github.event_name == 'release'
-#    env:
-#      #required so if it contains special characters they are not interpreted by powershell
-#      NUGET_AUTH_TOKEN: ${{secrets.NUGETAPIKEY}}
-#      NUGET_TARGET: https://api.nuget.org/v3/index.json
-#    steps:
-#      - name: Download Artifacts
-#        uses: actions/download-artifact@v3
-#        with:
-#          name: nupkg
-#      - name: Setup .NET Core
-#        uses: actions/setup-dotnet@v4
-#        with:
-#          dotnet-version: 9.0.x
-#      - name: Push to nuget
-##       does not find the nupkg file when used without download artifact.
-#        run: dotnet nuget push ./artifacts/*.nupkg -s $env:NUGETAPIKEY -k $env:NUGET_AUTH_TOKEN
