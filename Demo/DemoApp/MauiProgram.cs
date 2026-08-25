@@ -55,9 +55,11 @@ public static partial class MauiProgram
         
         AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
         {
-            var ex = e.ExceptionObject as Exception;
-            Console.WriteLine("AppDomain UnhandledException");
-            Console.WriteLine(ex.ToString());
+            if (e.ExceptionObject is Exception ex)
+            {
+                Console.WriteLine("AppDomain UnhandledException");
+                Console.WriteLine(ex.ToString());
+            }
         };
         
         TaskScheduler.UnobservedTaskException += (sender, e) =>

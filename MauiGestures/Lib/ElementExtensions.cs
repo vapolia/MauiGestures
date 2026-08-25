@@ -54,7 +54,7 @@ public static class ElementExtensions
             
         return new (locationWindow[0] / density, (locationWindow[1]-locationOfRootWindow[1]) / density);
 #elif IOS || MACCATALYST
-        if (element.Handler?.PlatformView is not UIView nativeView)
+        if (element.Handler?.PlatformView is not UIView nativeView || nativeView.Superview == null)
             return Point.Zero;
         var rect = nativeView.Superview.ConvertPointToView(nativeView.Frame.Location, null);
         return new (rect.X, rect.Y);

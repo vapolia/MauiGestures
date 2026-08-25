@@ -1,6 +1,6 @@
 ﻿using System.Windows.Input;
 using MauiGestures;
-using Vapolia.UserInteraction;
+using Vapolia.UserInteractions;
 using Point = Microsoft.Maui.Graphics.Point;
 
 namespace DemoApp.ViewModels;

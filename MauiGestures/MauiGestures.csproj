@@ -2,8 +2,8 @@
     <Import Project="FilenameBasedMultiTargeting.props" />
 
     <PropertyGroup>
-	    <TargetFrameworks>net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
-        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
+	    <TargetFrameworks>net10.0;net10.0-android;net10.0-ios;net10.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
         <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
         <!-- <TargetFrameworks>$(TargetFrameworks);net9.0-tizen</TargetFrameworks> -->
         <UseMaui>true</UseMaui>
@@ -24,8 +24,8 @@
         <None Include="../LICENSE.md" Pack="true" PackagePath="" />
         <None Include="../README.md" Pack="true" PackagePath="" />
         <None Include="../icon.png" Pack="true" PackagePath="" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.90" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.100" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.400" PrivateAssets="All"/>
     </ItemGroup>
 
     <!--  nuget configurable properties -->
@@ -47,7 +47,7 @@
         <Authors>Benjamin Mayrargue</Authors>
         <Owners>Benjamin Mayrargue</Owners>
         <NeutralLanguage>en</NeutralLanguage>
-        <Copyright>© 2016-2024 Benjamin Mayrargue</Copyright>
+        <Copyright>© 2016-2026 Benjamin Mayrargue</Copyright>
         <RepositoryUrl>https://github.com/vapolia/MauiGestures/</RepositoryUrl>
         <UseFullSemVerForNuGet>false</UseFullSemVerForNuGet>
         <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
@@ -56,6 +56,7 @@
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageProjectUrl>https://vapolia.eu</PackageProjectUrl>
         <PackageReleaseNotes>
+            3.0.0: MAUI 10
             2.0.2: Add events
             2.0.1: Add more helpers
             2.0.0: Replaced effects by behaviors
