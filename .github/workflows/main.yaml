@@ -20,6 +20,12 @@ jobs:
       PROJECT: MauiGestures/MauiGestures.csproj
 #      CODESIGN_PFX: ${{ secrets.CODESIGN_PFX }}
     steps:
+      - name: NuGet login
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: ${{ secrets.NUGET_LOGIN }}
+
       - uses: actions/checkout@v7
         
       #Saves a nuget config
@@ -36,7 +42,7 @@ jobs:
         shell: pwsh
         env:
           #required so if it contains special characters, they are not interpreted by Powershell
-          NUGET_AUTH_TOKEN: ${{secrets.NUGETAPIKEY}}
+          NUGET_AUTH_TOKEN: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
           NUGET_TARGET: https://api.nuget.org/v3/index.json
         run: |
           $VERSION="$env:NUPKG_MAJOR-ci$env:GITHUB_RUN_ID"
